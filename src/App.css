@@ -1,0 +1,58 @@
+/* src/App.css */
+
+.solana-button {
+    background: linear-gradient(135deg, #00FFA3, #DC1FFF);
+    /* Solana gradient color */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    /* Rounded corners for Solana style */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.solana-button:hover {
+    transform: scale(1.05);
+    /* Slight zoom on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    /* Add a shadow for hover effect */
+}
+
+.solana-button:active {
+    transform: scale(0.98);
+    /* Slight compression when clicked */
+}
+
+/* Rotating Coin Styles */
+.rotating-coin {
+    width: 250px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: spin 5s infinite linear, fall 3s ease-out 1;
+}
+
+@keyframes spin {
+    0% {
+        transform: translateX(-50%) rotateY(0deg);
+    }
+
+    100% {
+        transform: translateX(-50%) rotateY(360deg);
+    }
+}
+
+@keyframes fall {
+    0% {
+        top: 0;
+    }
+
+    100% {
+        top: 100vh;
+    }
+}
