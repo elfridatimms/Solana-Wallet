@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'; // Import useNavigate
 import {
   ConnectionProvider,
   WalletProvider,
@@ -16,13 +16,14 @@ import { SolletWalletAdapter } from '@solana/wallet-adapter-sollet'; // Import t
 import { clusterApiUrl } from '@solana/web3.js';
 import '@solana/wallet-adapter-react-ui/styles.css'; // Default styles
 
-// Import the wallet creation and recovery components
+// Import the wallet creation, recovery, and dashboard components
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
 
+// Home component (UI for choosing wallet creation or recovery)
 const Home = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Ensure useNavigate is properly imported
 
   return (
     <div className="min-h-screen bg-green-800 text-white flex flex-col items-center justify-center">
@@ -43,6 +44,9 @@ const Home = () => {
         >
           I ALREADY HAVE A WALLET
         </button>
+
+        {/* Button for connecting to an existing wallet */}
+        <WalletMultiButton className="bg-orange-600 text-white py-3 px-6 rounded-md" />
       </div>
     </div>
   );
@@ -50,7 +54,8 @@ const Home = () => {
 
 const App = () => {
   // Configure network and wallets
-  const network = clusterApiUrl('mainnet-beta');
+  const network = clusterApiUrl('devnet'); // For testing
+
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
