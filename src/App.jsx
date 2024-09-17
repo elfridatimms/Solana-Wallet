@@ -1,30 +1,41 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-
-// Import the wallet creation and recovery components
-import CreateWallet from './CreateWallet';
-import RecoverWallet from './RecoverWallet';  // Import the new component
+import './App.css';  // Import custom styles
+import CreateWallet from './CreateWallet';  // Import the wallet creation component
+import RecoverWallet from './RecoverWallet';  // Import the wallet recovery component
 
 const Home = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-green-800 text-white flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold mb-8">Solana Wallet Onboarding</h1>
-      <div className="flex space-x-8">
+    <div
+      className="min-h-screen bg-cover bg-center bg-no-repeat flex flex-col items-center justify-center relative"
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.6)', // Optional: Dark overlay
+      }}
+    >
+      {/* Rotating Coin */}
+      <img
+        src="/images/coin.png"  // Ensure the image path is correct
+        alt="Rotating Solana Coin"
+        className="rotating-coin"
+      />
+
+      <h1 className="text-4xl font-bold mb-8 text-white z-10">Solana Wallet Onboarding</h1>
+      <div className="flex space-x-8 z-10">
         {/* Button for creating a new wallet */}
         <button
-          className="bg-neutral-500 hover:bg-neutral-600 text-black font-bold py-3 px-6 rounded-md"
-          onClick={() => navigate('/create-wallet')}  // Navigate to wallet creation
+          className="solana-button"
+          onClick={() => navigate('/create-wallet')}
         >
           I NEED A NEW WALLET
         </button>
 
         {/* Button for recovering a wallet */}
         <button
-          className="bg-neutral-500 hover:bg-neutral-600 text-black font-bold py-3 px-6 rounded-md"
-          onClick={() => navigate('/recover-wallet')}  // Navigate to wallet recovery
+          className="solana-button"
+          onClick={() => navigate('/recover-wallet')}
         >
           I ALREADY HAVE A WALLET
         </button>
@@ -37,11 +48,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Home page route */}
         <Route path="/" element={<Home />} />
-        {/* Route for creating a new wallet */}
         <Route path="/create-wallet" element={<CreateWallet />} />
-        {/* Route for recovering an existing wallet */}
         <Route path="/recover-wallet" element={<RecoverWallet />} />
       </Routes>
     </Router>
