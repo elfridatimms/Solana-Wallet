@@ -3,8 +3,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
 // Import the wallet creation and recovery components
-import CreateWallet from './CreateWallet';
-import RecoverWallet from './RecoverWallet';  // Import the new component
+import CreateWallet from './components/CreateWallet.jsx';
+import RecoverWallet from './components/RecoverWallet.jsx';  // Import the new component
+import WalletDashboard from './components/WalletDashboard.jsx';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ const App = () => {
         <Route path="/create-wallet" element={<CreateWallet />} />
         {/* Route for recovering an existing wallet */}
         <Route path="/recover-wallet" element={<RecoverWallet />} />
+         {/* Route for the wallet dashboard */}
+         <Route path="/dashboard" element={<WalletDashboard />} />
       </Routes>
     </Router>
   );
