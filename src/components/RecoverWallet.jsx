@@ -1,76 +1,109 @@
 // src/components/RecoverWallet.jsx
 import React, { useState } from 'react';
 import * as bip39 from 'bip39';
-import { Keypair, Connection, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Keypair, Connection } from '@solana/web3.js';
 import { useNavigate } from 'react-router-dom';
 
 const RecoverWallet = () => {
-    const [seedPhrase, setSeedPhrase] = useState('');
-    const [publicKey, setPublicKey] = useState(null);
-    const [balance, setBalance] = useState(null);
+    const [seedPhrase, setSeedPhrase] = useState(new Array(12).fill('')); // 12 fields for recovery phrase
     const [error, setError] = useState('');
+    const [pasteSuccess, setPasteSuccess] = useState('');
     const navigate = useNavigate();
     const connection = new Connection('https://api.devnet.solana.com'); // Use devnet for testing
 
-    const handleRecover = async () => {
+    // Handle updating the input fields
+    const handleInputChange = (index, value) => {
+        const updatedSeedPhrase = [...seedPhrase];
+        updatedSeedPhrase[index] = value;
+        setSeedPhrase(updatedSeedPhrase);
+    };
+
+    // Function to paste the seed phrase
+    const handlePaste = async () => {
         try {
-            // Validate the seed phrase
-            if (!bip39.validateMnemonic(seedPhrase)) {
-                setError('Invalid seed phrase');
+            const clipboardText = await navigator.clipboard.readText();
+            const pastedWords = clipboardText.split(' ');
+
+            if (pastedWords.length !== 12) {
+                setError('Seed phrase must be exactly 12 words.');
                 return;
             }
 
-            // Convert the mnemonic to a seed
-            const seed = await bip39.mnemonicToSeed(seedPhrase);
+            setSeedPhrase(pastedWords); // Update the seed phrase with pasted values
+            setPasteSuccess('Seed phrase pasted successfully!');
+        } catch {
+            setError('Failed to paste the seed phrase.');
+        }
+    };
 
-            // Use only the first 32 bytes of the seed to generate the keypair
+    const handleRecover = async () => {
+        const mnemonic = seedPhrase.join(' ').trim();
+        try {
+            // Validate the seed phrase
+            if (!bip39.validateMnemonic(mnemonic)) {
+                setError('Invalid seed phrase');
+                return;
+            }
+            // Handle recovery logic
+            const seed = await bip39.mnemonicToSeed(mnemonic);
             const keypair = Keypair.fromSeed(seed.slice(0, 32));
 
-            // Set the public key to display
-            setPublicKey(keypair.publicKey.toBase58());
-
-            // Fetch the balance of the recovered account
-            const lamports = await connection.getBalance(keypair.publicKey);
-            setBalance(lamports / LAMPORTS_PER_SOL);
-
-            // Optionally store the public key in localStorage for future use
-            localStorage.setItem('solanaPublicKey', keypair.publicKey.toBase58());
-
-            // Redirect to the dashboard
+            // Redirect to the dashboard or handle the wallet recovery further
             navigate('/dashboard');
         } catch (err) {
             setError('Error recovering the wallet');
-            console.error(err);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-bold mb-4">Recover Your Wallet</h1>
-            <p className="mb-6">Enter your seed phrase to recover your wallet.</p>
+        <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center py-12 px-4">
+            <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6">
+                <h1 className="text-2xl font-bold mb-4">Enter your recovery phrase.</h1>
+                <p className="mb-6 text-gray-600">Your recovery phrase is the key to the wallet.</p>
 
-            <textarea
-                className="p-4 bg-gray-700 text-white rounded-md mb-4 w-96 h-32"
-                placeholder="Enter your 12-word seed phrase"
-                value={seedPhrase}
-                onChange={(e) => setSeedPhrase(e.target.value)}
-            />
-
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-
-            <button
-                className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-md"
-                onClick={handleRecover}
-            >
-                Recover Wallet
-            </button>
-
-            {publicKey && (
-                <div className="mt-6">
-                    <p>Public Key: <strong>{publicKey}</strong></p>
-                    <p>Balance: <strong>{balance} SOL</strong></p>
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                    {seedPhrase.map((word, index) => (
+                        <input
+                            key={index}
+                            type="text"
+                            className="p-2 border border-gray-400 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-[#8ecae6] text-[#112240]"
+                            placeholder={index + 1}
+                            value={word}
+                            onChange={(e) => handleInputChange(index, e.target.value)}
+                        />
+                    ))}
                 </div>
-            )}
+
+                {error && <p className="text-red-500 mb-4">{error}</p>}
+                {pasteSuccess && <p className="text-green-500 mb-4">{pasteSuccess}</p>}
+
+                {/* Buttons vertically aligned */}
+                <div className="flex flex-col space-y-4">
+                    {/* Button to paste seed phrase */}
+                    <button
+                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition"
+                        onClick={handlePaste}
+                    >
+                        PASTE SEED PHRASE
+                    </button>
+
+                    {/* Continue button */}
+                    <button
+                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition"
+                        onClick={handleRecover}
+                    >
+                        CONTINUE
+                    </button>
+
+                    {/* Back button */}
+                    <button
+                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-1 px-4 rounded-md transition"
+                        onClick={() => navigate('/')}
+                    >
+                        BACK
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };

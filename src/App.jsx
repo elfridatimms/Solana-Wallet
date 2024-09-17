@@ -22,16 +22,17 @@ import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
 
 // Home component (UI for choosing wallet creation or recovery)
+// src/Home.jsx
 const Home = () => {
-  const navigate = useNavigate();  // Ensure useNavigate is properly imported
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-green-800 text-white flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
       <h1 className="text-4xl font-bold mb-8">Solana Wallet Onboarding</h1>
       <div className="flex space-x-8">
         {/* Button for creating a new wallet */}
         <button
-          className="bg-neutral-500 hover:bg-neutral-600 text-black font-bold py-3 px-6 rounded-md"
+          className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
           onClick={() => navigate('/create-wallet')}  // Navigate to wallet creation
         >
           I NEED A NEW WALLET
@@ -39,18 +40,16 @@ const Home = () => {
 
         {/* Button for recovering a wallet */}
         <button
-          className="bg-neutral-500 hover:bg-neutral-600 text-black font-bold py-3 px-6 rounded-md"
+          className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
           onClick={() => navigate('/recover-wallet')}  // Navigate to wallet recovery
         >
           I ALREADY HAVE A WALLET
         </button>
-
-        {/* Button for connecting to an existing wallet */}
-        <WalletMultiButton className="bg-orange-600 text-white py-3 px-6 rounded-md" />
       </div>
     </div>
   );
 };
+
 
 const App = () => {
   // Configure network and wallets

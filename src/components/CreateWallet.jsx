@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 const CreateWallet = () => {
     const [seedPhrase, setSeedPhrase] = useState([]);
     const [publicKey, setPublicKey] = useState(null);
+    const [copySuccess, setCopySuccess] = useState('');
     const navigate = useNavigate();
 
     // Generate the seed phrase and derive wallet when the component mounts
@@ -31,20 +32,36 @@ const CreateWallet = () => {
         generateWallet();
     }, []);
 
+    // Function to copy the seed phrase to the clipboard
+    const copyToClipboard = () => {
+        const seedToCopy = seedPhrase.join(' ');
+        navigator.clipboard.writeText(seedToCopy)
+            .then(() => {
+                setCopySuccess('Seed phrase copied to clipboard!');
+            })
+            .catch(() => {
+                setCopySuccess('Failed to copy the seed phrase.');
+            });
+    };
+
     return (
-        <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
+        <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6">
             <h1 className="text-2xl font-bold mb-4">Write down your Recovery Phrase</h1>
             <p className="mb-6">You will need it on the next step</p>
 
             {/* Display the seed phrase */}
-            <div className="bg-gray-800 p-4 rounded-md mb-6">
-                <div className="grid grid-cols-3 gap-2">
+            <div className="bg-white p-4 rounded-md mb-6 shadow-lg">
+                <div className="grid grid-cols-3 gap-4">
                     {seedPhrase.length > 0 ? (
                         seedPhrase.map((word, index) => (
-                            <div key={index} className="text-left">
-                                <span className="text-gray-400">{index + 1}. </span>
-                                {word}
-                            </div>
+                            <input
+                                key={index}
+                                type="text"
+                                className="p-2 border border-gray-400 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-[#8ecae6] text-[#112240]"
+                                placeholder={index + 1}
+                                value={word}
+                                readOnly  // Disable editing as this is for display only
+                            />
                         ))
                     ) : (
                         <p>Generating Seed Phrase...</p>
@@ -52,12 +69,31 @@ const CreateWallet = () => {
                 </div>
             </div>
 
+            {/* Button to copy seed phrase */}
+            <button
+                className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition mb-4"
+                onClick={copyToClipboard}
+            >
+                COPY SEED PHRASE
+            </button>
+
+            {/* Display copy success message */}
+            {copySuccess && <p className="text-green-500 mb-4">{copySuccess}</p>}
+
             {/* Continue button */}
             <button
-                className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-6 rounded-md"
+                className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition mb-4"
                 onClick={() => navigate('/dashboard')}  // Navigate to dashboard
             >
                 I SAVED MY RECOVERY PHRASE
+            </button>
+
+            {/* Back button */}
+            <button
+                className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-1 px-4 rounded-md transition mt-4"
+                onClick={() => navigate('/')}
+            >
+                BACK
             </button>
 
             {/* Display the public key (for debugging or later usage) */}
