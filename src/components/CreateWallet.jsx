@@ -44,14 +44,27 @@ const CreateWallet = () => {
             });
     };
 
+    // Function to download the seed phrase as a text file
+    const downloadSeedPhrase = () => {
+        const seedText = seedPhrase.join(' '); // Join the seed phrase into a single string
+        const blob = new Blob([seedText], { type: 'text/plain' }); // Create a blob with the seed phrase
+        const link = document.createElement('a'); // Create a temporary link element
+        link.href = URL.createObjectURL(blob); // Create a URL for the blob
+        link.download = 'seed-phrase.txt'; // Set the download file name
+        document.body.appendChild(link); // Append the link to the document body
+        link.click(); // Programmatically click the link to trigger the download
+        document.body.removeChild(link); // Remove the link after download
+    };
+
     return (
         <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6">
-            <h1 className="text-2xl font-bold mb-4">Write down your Recovery Phrase</h1>
-            <p className="mb-6">You will need it on the next step</p>
+            <div className="max-w-sm w-full bg-white rounded-lg shadow-lg p-4" style={{ height: 'auto' }}>
+                <h1 className="text-lg font-bold mb-1 text-center">You will need it for later</h1>
+                <h2 className="text-xl font-bold mb-2 text-center">Write down your Recovery Phrase</h2>
+                <p className="mb-4 text-gray-600 text-center">You will need it on the next step</p>
 
-            {/* Display the seed phrase */}
-            <div className="bg-white p-4 rounded-md mb-6 shadow-lg">
-                <div className="grid grid-cols-3 gap-4">
+                {/* Display the seed phrase */}
+                <div className="grid grid-cols-3 gap-4 mb-4">
                     {seedPhrase.length > 0 ? (
                         seedPhrase.map((word, index) => (
                             <input
@@ -67,39 +80,43 @@ const CreateWallet = () => {
                         <p>Generating Seed Phrase...</p>
                     )}
                 </div>
+
+                {/* Display copy success message */}
+                {copySuccess && <p className="text-green-500 mb-4 text-center">{copySuccess}</p>}
+
+                {/* Buttons stacked vertically */}
+                <div className="flex flex-col space-y-4 items-center">
+                    <button
+                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
+                        onClick={copyToClipboard}
+                    >
+                        COPY SEED PHRASE
+                    </button>
+
+                    <button
+                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
+                        onClick={downloadSeedPhrase}
+                    >
+                        DOWNLOAD SEED PHRASE
+                    </button>
+
+                    <button
+                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
+                        onClick={() => navigate('/verify-seed')}  // Redirect to verify seed page
+                    >
+                        I SAVED MY RECOVERY PHRASE
+                    </button>
+
+                    {/* Back button */}
+                    <button
+                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-1 px-4 rounded-md transition w-1/3"
+                        onClick={() => navigate('/')}
+                    >
+                        BACK
+                    </button>
+
+                </div>
             </div>
-
-            {/* Button to copy seed phrase */}
-            <button
-                className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition mb-4"
-                onClick={copyToClipboard}
-            >
-                COPY SEED PHRASE
-            </button>
-
-            {/* Display copy success message */}
-            {copySuccess && <p className="text-green-500 mb-4">{copySuccess}</p>}
-
-            {/* Continue button */}
-            <button
-                className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition mb-4"
-                onClick={() => navigate('/dashboard')}  // Navigate to dashboard
-            >
-                I SAVED MY RECOVERY PHRASE
-            </button>
-
-            {/* Back button */}
-            <button
-                className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-1 px-4 rounded-md transition mt-4"
-                onClick={() => navigate('/')}
-            >
-                BACK
-            </button>
-
-            {/* Display the public key (for debugging or later usage) */}
-            {publicKey && (
-                <p className="mt-4">Your Wallet Public Key: <strong>{publicKey}</strong></p>
-            )}
         </div>
     );
 };

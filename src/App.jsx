@@ -1,6 +1,5 @@
-// src/App.jsx
 import React, { useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import {
   ConnectionProvider,
   WalletProvider,
@@ -12,17 +11,17 @@ import {
 import {
   PhantomWalletAdapter,
 } from '@solana/wallet-adapter-wallets';
-import { SolletWalletAdapter } from '@solana/wallet-adapter-sollet'; // Import the Sollet adapter from its package
+import { SolletWalletAdapter } from '@solana/wallet-adapter-sollet';
 import { clusterApiUrl } from '@solana/web3.js';
-import '@solana/wallet-adapter-react-ui/styles.css'; // Default styles
+import '@solana/wallet-adapter-react-ui/styles.css';
 
-// Import the wallet creation, recovery, and dashboard components
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
+import VerifySeed from './components/VerifySeed.jsx';
+import PasswordSetup from './components/PasswordSetup.jsx';
+import VerifyExistingWallet from './components/VerifyExistingWallet.jsx'; // Import the new component
 
-// Home component (UI for choosing wallet creation or recovery)
-// src/Home.jsx
 const Home = () => {
   const navigate = useNavigate();
 
@@ -30,18 +29,16 @@ const Home = () => {
     <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
       <h1 className="text-4xl font-bold mb-8">Solana Wallet Onboarding</h1>
       <div className="flex space-x-8">
-        {/* Button for creating a new wallet */}
         <button
           className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
-          onClick={() => navigate('/create-wallet')}  // Navigate to wallet creation
+          onClick={() => navigate('/create-wallet')}
         >
           I NEED A NEW WALLET
         </button>
 
-        {/* Button for recovering a wallet */}
         <button
           className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
-          onClick={() => navigate('/recover-wallet')}  // Navigate to wallet recovery
+          onClick={() => navigate('/recover-wallet')}
         >
           I ALREADY HAVE A WALLET
         </button>
@@ -50,15 +47,13 @@ const Home = () => {
   );
 };
 
-
 const App = () => {
-  // Configure network and wallets
   const network = clusterApiUrl('devnet'); // For testing
 
   const wallets = useMemo(
     () => [
       new PhantomWalletAdapter(),
-      new SolletWalletAdapter(), // Use the Sollet wallet adapter
+      new SolletWalletAdapter(),
     ],
     []
   );
@@ -69,14 +64,13 @@ const App = () => {
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <Routes>
-              {/* Home page route */}
               <Route path="/" element={<Home />} />
-              {/* Route for creating a new wallet */}
               <Route path="/create-wallet" element={<CreateWallet />} />
-              {/* Route for recovering an existing wallet */}
               <Route path="/recover-wallet" element={<RecoverWallet />} />
-              {/* Route for the wallet dashboard */}
+              <Route path="/verify-seed" element={<VerifySeed />} />
+              <Route path="/password-setup" element={<PasswordSetup />} />
               <Route path="/dashboard" element={<WalletDashboard />} />
+              <Route path="/verify-existing-wallet" element={<VerifyExistingWallet />} /> {/* New Route */}
             </Routes>
           </WalletModalProvider>
         </WalletProvider>
