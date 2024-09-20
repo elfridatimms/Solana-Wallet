@@ -1,14 +1,15 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { ConnectionProvider } from '@solana/wallet-adapter-react';
 import { clusterApiUrl } from '@solana/web3.js';
 
-// Import your components
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
+import SendTransaction from './components/SendTransaction.jsx';
+import VerifySeed from './components/VerifySeed.jsx';  // Import VerifySeed component
+import PasswordSetup from './components/PasswordSetup.jsx';  // Import PasswordSetup component
 
-// Home component
 const Home = () => {
   const navigate = useNavigate();
 
@@ -36,18 +37,18 @@ const Home = () => {
 const App = () => {
   const network = clusterApiUrl('devnet'); // For testing
 
-  // WalletProvider and ConnectionProvider should wrap your Routes
   return (
     <Router>
       <ConnectionProvider endpoint={network}>
-        <WalletProvider>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/create-wallet" element={<CreateWallet />} />
-            <Route path="/recover-wallet" element={<RecoverWallet />} />
-            <Route path="/dashboard" element={<WalletDashboard />} />
-          </Routes>
-        </WalletProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/create-wallet" element={<CreateWallet />} />
+          <Route path="/recover-wallet" element={<RecoverWallet />} />
+          <Route path="/verify-seed" element={<VerifySeed />} />
+          <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
+          <Route path="/dashboard" element={<WalletDashboard />} />
+          <Route path="/send-transaction" element={<SendTransaction />} />
+        </Routes>
       </ConnectionProvider>
     </Router>
   );

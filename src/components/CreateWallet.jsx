@@ -102,7 +102,7 @@ const CreateWallet = () => {
 
                     <button
                         className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
-                        onClick={() => navigate('/verify-seed')}  // Redirect to verify seed page
+                        onClick={() => navigate('/verify-seed')}  // Correct route as a string
                     >
                         I SAVED MY RECOVERY PHRASE
                     </button>
