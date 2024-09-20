@@ -1,0 +1,14 @@
+[33m92364a8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{0}: pull: Fast-forward
+[33m222c2e9[m HEAD@{1}: commit: Dodana sifra, upload seed datoteke ..
+[33m3eeb15a[m HEAD@{2}: pull: Fast-forward
+[33m955a716[m HEAD@{3}: commit: svasta dodano
+[33m74d851d[m HEAD@{4}: commit: Spojile na dashboard, i dodale recoverwallet
+[33mee99baf[m HEAD@{5}: pull: Fast-forward
+[33md6f0f1a[m HEAD@{6}: reset: moving to HEAD
+[33md6f0f1a[m HEAD@{7}: pull: Fast-forward
+[33m483e8a8[m HEAD@{8}: pull: Fast-forward
+[33m17e49dd[m HEAD@{9}: checkout: moving from purnara to master
+[33m93021b1[m[33m ([m[1;31morigin/purnara[m[33m, [m[1;32mpurnara[m[33m)[m HEAD@{10}: commit: dodala sam app.css i mjesto gdje cu napraviti seed
+[33ma4f2800[m HEAD@{11}: commit: Ruzne su boje trenutno, dodala samo recirect
+[33m17e49dd[m HEAD@{12}: checkout: moving from master to purnara
+[33m17e49dd[m HEAD@{13}: clone: from https://github.com/githubuser2224/Solana-Wallet.git
