@@ -1,27 +1,14 @@
 import React, { useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from '@solana/wallet-adapter-react';
-import {
-  WalletModalProvider,
-  WalletMultiButton
-} from '@solana/wallet-adapter-react-ui';
-import {
-  PhantomWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
-import { SolletWalletAdapter } from '@solana/wallet-adapter-sollet';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { clusterApiUrl } from '@solana/web3.js';
-import '@solana/wallet-adapter-react-ui/styles.css';
 
+// Import your components
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
-import VerifySeed from './components/VerifySeed.jsx';
-import PasswordSetup from './components/PasswordSetup.jsx';
-import VerifyExistingWallet from './components/VerifyExistingWallet.jsx'; // Import the new component
 
+// Home component
 const Home = () => {
   const navigate = useNavigate();
 
@@ -35,7 +22,6 @@ const Home = () => {
         >
           I NEED A NEW WALLET
         </button>
-
         <button
           className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
           onClick={() => navigate('/recover-wallet')}
@@ -50,29 +36,17 @@ const Home = () => {
 const App = () => {
   const network = clusterApiUrl('devnet'); // For testing
 
-  const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter(),
-      new SolletWalletAdapter(),
-    ],
-    []
-  );
-
+  // WalletProvider and ConnectionProvider should wrap your Routes
   return (
     <Router>
       <ConnectionProvider endpoint={network}>
-        <WalletProvider wallets={wallets} autoConnect>
-          <WalletModalProvider>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/create-wallet" element={<CreateWallet />} />
-              <Route path="/recover-wallet" element={<RecoverWallet />} />
-              <Route path="/verify-seed" element={<VerifySeed />} />
-              <Route path="/password-setup" element={<PasswordSetup />} />
-              <Route path="/dashboard" element={<WalletDashboard />} />
-              <Route path="/verify-existing-wallet" element={<VerifyExistingWallet />} /> {/* New Route */}
-            </Routes>
-          </WalletModalProvider>
+        <WalletProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/create-wallet" element={<CreateWallet />} />
+            <Route path="/recover-wallet" element={<RecoverWallet />} />
+            <Route path="/dashboard" element={<WalletDashboard />} />
+          </Routes>
         </WalletProvider>
       </ConnectionProvider>
     </Router>
