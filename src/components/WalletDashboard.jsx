@@ -17,24 +17,42 @@ const WalletDashboard = () => {
   const { connection } = useConnection(); // Access connection
   const { publicKey: walletPublicKey, sendTransaction } = useWallet(); // Access wallet
 
-  // Phantom Wallet detection and connection
+  // Retrieve public key from localStorage on component mount
   useEffect(() => {
-    // Check if Phantom is installed
+    const storedPublicKey = localStorage.getItem('solanaPublicKey');
+
+    if (storedPublicKey) {
+      const key = new PublicKey(storedPublicKey);
+      setPublicKey(key.toBase58());
+
+      // Fetch balance and tokens for the stored public key
+      connection.getBalance(key).then((lamports) => {
+        setBalance(lamports / LAMPORTS_PER_SOL);
+      });
+      fetchTokens(key, connection).then(setTokens);
+    }
+  }, [connection]);
+
+  // Phantom Wallet connection logic
+  useEffect(() => {
     if (window.solana && window.solana.isPhantom) {
       console.log('Phantom wallet is installed');
+
       window.solana.connect({ onlyIfTrusted: true })
         .then((response) => {
           console.log('Connected to Phantom:', response.publicKey.toString());
-          const publicKey = response.publicKey.toString();
-          setPublicKey(publicKey);
 
-          // Fetch the balance
-          const key = new PublicKey(publicKey);
+          // Save public key in localStorage
+          localStorage.setItem('solanaPublicKey', response.publicKey.toString());
+
+          // Set public key in state
+          setPublicKey(response.publicKey.toString());
+
+          // Fetch balance and tokens for this public key
+          const key = new PublicKey(response.publicKey.toString());
           connection.getBalance(key).then((lamports) => {
             setBalance(lamports / LAMPORTS_PER_SOL);
           });
-
-          // Fetch SPL tokens
           fetchTokens(key, connection).then(setTokens);
         })
         .catch((err) => {

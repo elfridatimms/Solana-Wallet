@@ -4,7 +4,6 @@ import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'; // Wallet modal for wallet selection
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
-import WalletConnectTest from './components/WalletConnectTest.jsx'; // Import the test component
 
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
@@ -56,7 +55,6 @@ const App = () => {
               <Route path="/dashboard" element={<WalletDashboard />} />
 
               <Route path="/send-transaction" element={<SendTransaction />} />
-              <Route path="/test-wallet" element={<WalletConnectTest />} /> {/* Add this route */}
 
             </Routes>
           </WalletModalProvider>

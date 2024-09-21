@@ -1,36 +1,39 @@
 import { defineConfig } from 'vite';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
-import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
+import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
 
 export default defineConfig({
   plugins: [
     NodeGlobalsPolyfillPlugin({
-      process: true,
       buffer: true,
+      process: true,
     }),
-    NodeModulesPolyfillPlugin(),
   ],
   resolve: {
     alias: {
-      // Alias the required Node.js modules for the browser
-      stream: 'stream-browserify',
       buffer: 'buffer',
-      util: 'util',
+      stream: 'stream-browserify',
       crypto: 'crypto-browserify',
+      util: 'util',
     },
   },
   optimizeDeps: {
     esbuildOptions: {
       define: {
-        global: 'globalThis',  // Define globalThis to simulate the global object
-        process: 'process',
+        global: 'globalThis',
       },
       plugins: [
         NodeGlobalsPolyfillPlugin({
-          process: true,
           buffer: true,
+          process: true,
         }),
-        NodeModulesPolyfillPlugin(),
+      ],
+    },
+  },
+  build: {
+    rollupOptions: {
+      plugins: [
+        rollupNodePolyFill(), // Polyfills for Node.js core modules in browser
       ],
     },
   },
