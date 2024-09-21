@@ -17,20 +17,31 @@ const WalletDashboard = () => {
   const { connection } = useConnection(); // Access connection
   const { publicKey: walletPublicKey, sendTransaction } = useWallet(); // Access wallet
 
+  // Phantom Wallet detection and connection
   useEffect(() => {
-    // Get the public key from localStorage
-    const storedPublicKey = localStorage.getItem('solanaPublicKey');
-    if (storedPublicKey) {
-      const key = new PublicKey(storedPublicKey);
-      setPublicKey(key.toBase58());
+    // Check if Phantom is installed
+    if (window.solana && window.solana.isPhantom) {
+      console.log('Phantom wallet is installed');
+      window.solana.connect({ onlyIfTrusted: true })
+        .then((response) => {
+          console.log('Connected to Phantom:', response.publicKey.toString());
+          const publicKey = response.publicKey.toString();
+          setPublicKey(publicKey);
 
-      // Fetch the balance
-      connection.getBalance(key).then((lamports) => {
-        setBalance(lamports / LAMPORTS_PER_SOL);
-      });
+          // Fetch the balance
+          const key = new PublicKey(publicKey);
+          connection.getBalance(key).then((lamports) => {
+            setBalance(lamports / LAMPORTS_PER_SOL);
+          });
 
-      // Fetch SPL tokens
-      fetchTokens(key, connection).then(setTokens);
+          // Fetch SPL tokens
+          fetchTokens(key, connection).then(setTokens);
+        })
+        .catch((err) => {
+          console.error('Failed to connect to Phantom:', err);
+        });
+    } else {
+      console.log('Phantom wallet not installed');
     }
   }, [connection]);
 
@@ -58,7 +69,7 @@ const WalletDashboard = () => {
         <div className="space-y-4">
           <p>Public Key: <strong>{publicKey}</strong></p>
           <p>Balance: <strong>{balance} SOL</strong></p>
-          
+
           {/* Display SPL Tokens */}
           <h3 className="text-xl font-bold mt-6">SPL Tokens</h3>
           {tokens.length > 0 ? (
@@ -79,7 +90,7 @@ const WalletDashboard = () => {
           ) : (
             <p>No SPL tokens found.</p>
           )}
-          
+
           {/* Action Buttons */}
           <div className="flex space-x-4 mt-6">
             <button
@@ -94,14 +105,14 @@ const WalletDashboard = () => {
             >
               Receive
             </button>
-            <button 
+            <button
               className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded"
               onClick={handleSendClick}
             >
               Send
             </button>
           </div>
-          
+
           {/* Modal for Send Transaction */}
           {modalType === 'send' && (
             <Modal
@@ -123,7 +134,7 @@ const WalletDashboard = () => {
               </div>
             </Modal>
           )}
-          
+
           {/* Modal for Receive Info */}
           {modalType === 'receive' && (
             <Modal

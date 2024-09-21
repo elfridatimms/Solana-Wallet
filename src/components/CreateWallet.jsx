@@ -1,32 +1,50 @@
-// src/components/CreateWallet.jsx
 import React, { useState, useEffect } from 'react';
 import * as bip39 from 'bip39';
-import { Keypair } from '@solana/web3.js'; // Import Solana Web3 for wallet derivation
+import { Keypair, Connection } from '@solana/web3.js'; // Import Solana Web3 for wallet derivation and connection
+import { derivePath } from 'ed25519-hd-key'; // Import to derive the correct Solana key
 import { useNavigate } from 'react-router-dom';
 
 const CreateWallet = () => {
     const [seedPhrase, setSeedPhrase] = useState([]);
     const [publicKey, setPublicKey] = useState(null);
     const [copySuccess, setCopySuccess] = useState('');
+    const [accountCreated, setAccountCreated] = useState(false); // Track if account is created
+    const [error, setError] = useState('');
     const navigate = useNavigate();
+
+    const connection = new Connection('https://api.devnet.solana.com', 'confirmed'); // Use devnet for testing
 
     // Generate the seed phrase and derive wallet when the component mounts
     useEffect(() => {
         const generateWallet = async () => {
-            // Generate mnemonic (seed phrase)
-            const mnemonic = bip39.generateMnemonic();
-            setSeedPhrase(mnemonic.split(' '));
+            try {
+                // Generate mnemonic (seed phrase)
+                const mnemonic = bip39.generateMnemonic();
+                setSeedPhrase(mnemonic.split(' '));
 
-            // Derive the wallet from the mnemonic
-            const seed = await bip39.mnemonicToSeed(mnemonic); // Converts mnemonic to seed buffer
-            const derivedKeypair = Keypair.fromSeed(seed.slice(0, 32)); // Solana requires 32 bytes for the keypair
+                // Derive the wallet using BIP44 path for Solana
+                const seed = await bip39.mnemonicToSeed(mnemonic); // Converts mnemonic to seed buffer
+                const path = `m/44'/501'/0'/0'`; // Standard BIP44 derivation path for Solana
+                const derivedSeed = derivePath(path, seed.toString('hex')).key;
 
-            // Store the seed phrase in localStorage (never store on server)
-            localStorage.setItem('solanaSeedPhrase', mnemonic);
-            localStorage.setItem('solanaPublicKey', derivedKeypair.publicKey.toString());
+                // Create a Keypair from the derived seed
+                const derivedKeypair = Keypair.fromSeed(derivedSeed.slice(0, 32));
 
-            // Set public key to state for display
-            setPublicKey(derivedKeypair.publicKey.toString());
+                // Store the seed phrase and public key in localStorage (never store on server)
+                localStorage.setItem('solanaSeedPhrase', mnemonic);
+                localStorage.setItem('solanaPublicKey', derivedKeypair.publicKey.toString());
+
+                // Set public key to state for display
+                setPublicKey(derivedKeypair.publicKey.toString());
+
+                // Request an airdrop (only on devnet) to activate the account
+                const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 1 * 1e9); // Request 1 SOL
+                await connection.confirmTransaction(airdropSignature, 'confirmed');
+                setAccountCreated(true); // Account successfully created and funded
+            } catch (err) {
+                console.error("Error creating wallet:", err);
+                setError("Failed to create the wallet. Please try again.");
+            }
         };
 
         generateWallet();
@@ -80,6 +98,22 @@ const CreateWallet = () => {
                         <p>Generating Seed Phrase...</p>
                     )}
                 </div>
+
+                {/* Display public key if available */}
+                {publicKey && (
+                    <div className="text-center mb-4">
+                        <p>Your Public Key:</p>
+                        <p className="text-[#8ecae6]">{publicKey}</p>
+                    </div>
+                )}
+
+                {accountCreated && (
+                    <p className="text-green-500 text-center mb-4">
+                        Account successfully created and 1 SOL has been airdropped to your wallet!
+                    </p>
+                )}
+
+                {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
                 {/* Display copy success message */}
                 {copySuccess && <p className="text-green-500 mb-4 text-center">{copySuccess}</p>}

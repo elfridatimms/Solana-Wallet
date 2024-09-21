@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as bip39 from 'bip39';
-import { Keypair, Connection } from '@solana/web3.js';
+import { Keypair, Connection, PublicKey } from '@solana/web3.js';
 import { useNavigate } from 'react-router-dom';
 
 const RecoverWallet = () => {
@@ -8,9 +8,9 @@ const RecoverWallet = () => {
     const [error, setError] = useState('');
     const [pasteSuccess, setPasteSuccess] = useState('');
     const [fileSuccess, setFileSuccess] = useState('');
+    const [publicKeyDisplay, setPublicKeyDisplay] = useState('');
     const navigate = useNavigate();
-    //const connection = new Connection('https://api.devnet.solana.com'); // Use devnet for testing
-    const connection = new Connection('https://api.mainnet-beta.solana.com');
+    const connection = new Connection('https://api.devnet.solana.com'); // Use devnet for testing
 
     // Handle updating the input fields
     const handleInputChange = (index, value) => {
@@ -66,6 +66,16 @@ const RecoverWallet = () => {
         reader.readAsText(file); // Read the file as text
     };
 
+    // Validate public key helper function
+    const validatePublicKey = (key) => {
+        try {
+            const publicKey = new PublicKey(key);
+            return PublicKey.isOnCurve(publicKey);
+        } catch {
+            return false;
+        }
+    };
+
     const handleRecover = async () => {
         const mnemonic = seedPhrase.join(' ').trim();
         try {
@@ -81,11 +91,11 @@ const RecoverWallet = () => {
             // Generate a Keypair from the seed
             const keypair = Keypair.fromSeed(seed.slice(0, 32));
 
+            // Set the public key in state for display
+            setPublicKeyDisplay(keypair.publicKey.toString());
+
             // Log the public key for manual checking on Solana block explorer
             console.log("Public Key Generated:", keypair.publicKey.toString());
-
-            // Switch to Mainnet connection
-            const connection = new Connection('https://api.mainnet-beta.solana.com');
 
             // Check if the account exists by getting its account information
             const accountInfo = await connection.getAccountInfo(keypair.publicKey);
@@ -102,7 +112,6 @@ const RecoverWallet = () => {
             setError('Error recovering the wallet');
         }
     };
-
 
     return (
         <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center py-12 px-4">
@@ -126,6 +135,9 @@ const RecoverWallet = () => {
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 {pasteSuccess && <p className="text-green-500 mb-4">{pasteSuccess}</p>}
                 {fileSuccess && <p className="text-green-500 mb-4">{fileSuccess}</p>}
+                {publicKeyDisplay && (
+                    <p className="text-green-500 mb-4">Generated Public Key: {publicKeyDisplay}</p>
+                )}
 
                 {/* File Upload */}
                 <div className="mb-4">

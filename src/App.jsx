@@ -1,14 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { ConnectionProvider } from '@solana/wallet-adapter-react';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'; // Wallet modal for wallet selection
+import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
+import WalletConnectTest from './components/WalletConnectTest.jsx'; // Import the test component
 
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
 import SendTransaction from './components/SendTransaction.jsx';
-import VerifySeed from './components/VerifySeed.jsx';  // Import VerifySeed component
-import PasswordSetup from './components/PasswordSetup.jsx';  // Import PasswordSetup component
+import VerifySeed from './components/VerifySeed.jsx';
+import PasswordSetup from './components/PasswordSetup.jsx';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -37,18 +40,27 @@ const Home = () => {
 const App = () => {
   const network = clusterApiUrl('devnet'); // For testing
 
+  const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()]; // Wallets
+
   return (
     <Router>
       <ConnectionProvider endpoint={network}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/create-wallet" element={<CreateWallet />} />
-          <Route path="/recover-wallet" element={<RecoverWallet />} />
-          <Route path="/verify-seed" element={<VerifySeed />} />
-          <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
-          <Route path="/dashboard" element={<WalletDashboard />} />
-          <Route path="/send-transaction" element={<SendTransaction />} />
-        </Routes>
+        <WalletProvider wallets={wallets} autoConnect>
+          <WalletModalProvider>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/create-wallet" element={<CreateWallet />} />
+              <Route path="/recover-wallet" element={<RecoverWallet />} />
+              <Route path="/verify-seed" element={<VerifySeed />} />
+              <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
+              <Route path="/dashboard" element={<WalletDashboard />} />
+
+              <Route path="/send-transaction" element={<SendTransaction />} />
+              <Route path="/test-wallet" element={<WalletConnectTest />} /> {/* Add this route */}
+
+            </Routes>
+          </WalletModalProvider>
+        </WalletProvider>
       </ConnectionProvider>
     </Router>
   );
