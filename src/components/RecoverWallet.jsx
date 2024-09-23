@@ -1,7 +1,73 @@
 import React, { useState } from 'react';
-import * as bip39 from 'bip39';
-import { Keypair, Connection, PublicKey } from '@solana/web3.js';
+import 'unorm';  // Import polyfill for normalize()
+import { Keypair, Connection } from '@solana/web3.js';
 import { useNavigate } from 'react-router-dom';
+import bip39 from 'bip39-light';
+import { derivePath } from 'ed25519-hd-key'; // For proper key derivation for Solana wallets
+
+// Function to derive the keypair from the seed using correct derivation path
+export async function deriveKeypairFromSeed(mnemonic) {
+    // Generate seed from the mnemonic asynchronously
+    const seed = await bip39.mnemonicToSeed(mnemonic); // This returns a Buffer
+
+    // Use BIP44 derivation path for Solana
+    const path = "m/44'/501'/0'/0'"; // Solana-specific derivation path
+    const derivedSeed = derivePath(path, seed.toString('hex')).key; // Get derived private key
+
+    // Return the Keypair
+    return Keypair.fromSeed(derivedSeed);
+}
+
+// Encrypt the seed phrase
+export async function encryptSeed(seedPhrase, password) {
+    const encoder = new TextEncoder();
+
+    // Derive key from password
+    const keyMaterial = await getKeyMaterial(password);
+    const salt = window.crypto.getRandomValues(new Uint8Array(16)); // Generate a random salt
+    const key = await window.crypto.subtle.deriveKey(
+        {
+            name: "PBKDF2",
+            salt: salt,
+            iterations: 100000,
+            hash: 'SHA-256',
+        },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt']
+    );
+
+    // Encode seed phrase
+    const seedBuffer = encoder.encode(seedPhrase);
+
+    // Create initialization vector (IV) for AES-GCM
+    const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+    // Encrypt the seed phrase
+    const encryptedData = await window.crypto.subtle.encrypt(
+        {
+            name: 'AES-GCM',
+            iv,
+        },
+        key,
+        seedBuffer
+    );
+
+    return { encryptedData, iv, salt };
+}
+
+// Helper function to derive the key from a password
+async function getKeyMaterial(password) {
+    const encoder = new TextEncoder();
+    return window.crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password),
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey']
+    );
+}
 
 const RecoverWallet = () => {
     const [seedPhrase, setSeedPhrase] = useState(new Array(12).fill('')); // 12 fields for recovery phrase
@@ -66,49 +132,36 @@ const RecoverWallet = () => {
         reader.readAsText(file); // Read the file as text
     };
 
-    // Validate public key helper function
-    const validatePublicKey = (key) => {
-        try {
-            const publicKey = new PublicKey(key);
-            return PublicKey.isOnCurve(publicKey);
-        } catch {
-            return false;
-        }
-    };
-
     const handleRecover = async () => {
         const mnemonic = seedPhrase.join(' ').trim();
         try {
-            // Validate the seed phrase
+            // Validate the mnemonic seed phrase
             if (!bip39.validateMnemonic(mnemonic)) {
                 setError('Invalid seed phrase');
                 return;
             }
 
-            // Convert mnemonic to seed
-            const seed = await bip39.mnemonicToSeed(mnemonic);
+            // Derive the keypair from the mnemonic using correct derivation path
+            const keypair = await deriveKeypairFromSeed(mnemonic);
 
-            // Generate a Keypair from the seed
-            const keypair = Keypair.fromSeed(seed.slice(0, 32));
+            // Encrypt the seed phrase using the password from localStorage
+            const password = localStorage.getItem('walletPassword');
+            const { encryptedData, iv, salt } = await encryptSeed(mnemonic, password);
 
-            // Set the public key in state for display
+            // Store the encrypted seed, iv, and salt in localStorage
+            localStorage.setItem('encryptedSeed', JSON.stringify(Array.from(new Uint8Array(encryptedData))));
+            localStorage.setItem('iv', JSON.stringify(Array.from(iv)));
+            localStorage.setItem('salt', JSON.stringify(Array.from(salt))); // Store the salt
+
+            // Display the public key for the recovered wallet
             setPublicKeyDisplay(keypair.publicKey.toString());
-
-            // Log the public key for manual checking on Solana block explorer
             console.log("Public Key Generated:", keypair.publicKey.toString());
+            console.log('normalize exists:', !!String.prototype.normalize);
 
-            // Check if the account exists by getting its account information
-            const accountInfo = await connection.getAccountInfo(keypair.publicKey);
-
-            if (accountInfo) {
-                console.log("Account Info: ", accountInfo);
-                // Wallet exists on the blockchain, navigate to dashboard with public key
-                navigate('/dashboard', { state: { publicKey: keypair.publicKey.toString() } });
-            } else {
-                setError('No existing wallet found for the given seed phrase.');
-            }
+            // Navigate to password setup after successful wallet recovery
+            navigate('/password-setup');
         } catch (err) {
-            console.error("Error: ", err);
+            console.error("Error recovering the wallet: ", err);
             setError('Error recovering the wallet');
         }
     };
@@ -149,9 +202,9 @@ const RecoverWallet = () => {
                     />
                 </div>
 
-                {/* Buttons vertically aligned */}
+                {/* Buttons */}
                 <div className="flex flex-col space-y-4 items-center">
-                    {/* Button to paste seed phrase */}
+                    {/* Paste Seed Phrase Button */}
                     <button
                         className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
                         onClick={handlePaste}

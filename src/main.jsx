@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
 
+
 // Only polyfill Buffer if needed (this might be unnecessary now with Vite)
 import { Buffer } from 'buffer';
 if (!window.Buffer) {

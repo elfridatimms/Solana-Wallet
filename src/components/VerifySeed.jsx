@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import * as bip39 from 'bip39';
 import { Keypair, Connection } from '@solana/web3.js';
 import { useNavigate } from 'react-router-dom';
+import { encryptSeed } from '../utils/cryptoUtils';
 
 const VerifySeed = () => {
     const [seedInput, setSeedInput] = useState(new Array(12).fill('')); // 12 input fields for recovery phrase
@@ -34,33 +35,31 @@ const VerifySeed = () => {
         }
     };
 
-    // Handle verifying and creating a new wallet from the seed phrase
+
     const handleVerify = async () => {
         const mnemonic = seedInput.join(' ').trim();
-
         try {
-            // Validate the seed phrase
             if (!bip39.validateMnemonic(mnemonic)) {
                 setError('Invalid seed phrase');
                 return;
             }
 
-            // Generate seed buffer from mnemonic
             const seed = await bip39.mnemonicToSeed(mnemonic);
-
-            // Create a Keypair from the seed
             const keypair = Keypair.fromSeed(seed.slice(0, 32));
 
-            // Store public key and seed in localStorage (optional)
-            localStorage.setItem('solanaPublicKey', keypair.publicKey.toString());
-            localStorage.setItem('solanaSeedPhrase', mnemonic);
+            const password = localStorage.getItem('walletPassword');
+            const { encryptedData, iv } = await encryptSeed(mnemonic, password);
 
-            // Preusmjeri korisnika na stranicu za postavljanje lozinke
+            // Store the encrypted seed and iv in localStorage
+            localStorage.setItem('encryptedSeed', JSON.stringify(Array.from(new Uint8Array(encryptedData))));
+            localStorage.setItem('iv', JSON.stringify(Array.from(iv)));
+
             navigate('/password-setup');
         } catch (err) {
             setError('Error verifying the seed phrase or creating wallet.');
         }
     };
+
 
     return (
         <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6">
