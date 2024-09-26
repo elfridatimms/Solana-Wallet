@@ -4,6 +4,9 @@ import SendTransaction from './SendTransaction';
 import QRCode from 'react-qr-code';
 import Modal from 'react-modal';
 import { decryptData } from '../utils/cryptoUtils';
+import { MoonPayBuyWidget } from '@moonpay/moonpay-react';
+import SPLTokenList from './SPLTokenList.jsx';
+
 
 Modal.setAppElement('#root');
 
@@ -13,7 +16,14 @@ const WalletDashboard = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalType, setModalType] = useState('');
   const [error, setError] = useState(null);
-  const [selectedAmount, setSelectedAmount] = useState('');
+
+  const [amountEUR, setAmountEUR] = useState(10);
+  const [amountSOL, setAmountSOL] = useState(0);
+  const [exchangeRate, setExchangeRate] = useState(0);
+
+  const [visible, setVisible] = useState(false);
+
+
 
   const connection = new Connection('https://api.devnet.solana.com');
 
@@ -46,6 +56,31 @@ const WalletDashboard = () => {
     retrieveAndDecryptSeed();
   }, [connection]);
 
+
+  // Fetch exchange rate from CoinGecko
+  const fetchExchangeRate = async () => {
+    try {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur');
+      const data = await response.json();
+      if (data.solana && data.solana.eur) {
+        setExchangeRate(data.solana.eur); // Set EUR to SOL rate
+      }
+    } catch (error) {
+      console.error('Error fetching exchange rate:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchExchangeRate(); // Fetch rate when the component mounts
+  }, []);
+
+  useEffect(() => {
+    // Update SOL equivalent when EUR amount or exchange rate changes
+    setAmountSOL((amountEUR / exchangeRate).toFixed(4));
+  }, [amountEUR, exchangeRate]);
+
+
+
   const handleSendClick = () => {
     setModalType('send');
     setModalIsOpen(true);
@@ -65,7 +100,7 @@ const WalletDashboard = () => {
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#142850] to-[#27496d] text-white flex flex-col items-center justify-center p-6 space-y-6">
+    <div className="min-h-screen  bg-[#112240] text-white flex flex-col items-center justify-center p-6 space-y-6">
       <h1 className="text-5xl font-bold mb-8 tracking-wider text-[#f4f9f9]">Wallet Dashboard</h1>
       {error ? (
         <p className="text-red-500 text-xl">{error}</p>
@@ -100,57 +135,61 @@ const WalletDashboard = () => {
                 </button>
               </div>
 
+              <button onClick={() => setVisible(!visible)}>
+            Toggle widget
+        </button>
+
+              <MoonPayBuyWidget
+            variant="overlay"
+            baseCurrencyCode="usd"
+            baseCurrencyAmount="100"
+            defaultCurrencyCode="sol"
+            visible={visible}
+        />
+
               {/* Modal for buying crypto */}
-              {modalType === 'buy' && (
-  <Modal
-    isOpen={modalIsOpen}
-    onRequestClose={handleModalClose}
-    className="fixed inset-0 flex items-center justify-center p-4"
-    overlayClassName="fixed inset-0 bg-black bg-opacity-50"
-  >
-    <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full relative">
-      <button
-        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold"
-        onClick={handleModalClose}
+              {modalType === 'buy' && (<Modal
+        isOpen={modalIsOpen}
+        onRequestClose={handleModalClose}
+        className="fixed inset-0 flex items-center justify-center p-4"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
       >
-        ×
-      </button>
-      <h4 className="text-xl font-semibold mb-6 text-center text-[#0c7b93]">Buy Crypto</h4>
-      <p className="text-center text-gray-700 mb-6">
-        Enter an amount between $10 and $100:
-      </p>
+        <div className="bg-white p-6 rounded-lg relative">
+          {/* Close Button */}
+          <button className="absolute top-2 right-2 text-black text-2xl font-bold" onClick={handleModalClose}>
+            ×
+          </button>
 
-      {/* Input for Amount Selection */}
-      <input
-        type="number"
-        min="10"
-        max="100"
-        step="0.01"
-        value={selectedAmount}
-        onChange={(e) => setSelectedAmount(e.target.value)}
-        className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-        placeholder="$10 - $100"
-      />
+          <h2 className="text-xl font-semibold mb-4">Buy SOL</h2>
 
-      {/* Buy Button */}
-      <button
-        className="bg-[#0c7b93] text-white font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#27496d] w-full"
-        onClick={() => {
-          const amount = parseFloat(selectedAmount);
-          if (amount >= 10 && amount <= 100) {
-            const url = `https://onramp.gatefi.com/?gtfTradeId=bf76cf37-485a-4ecc-80a2-1ccb2d362bbd&merchantId=3dfda921-ad62-4740-a728-319ab721f027&themeMode=dark&lang=en_US&amount=${amount}`;
-            // Redirect to the URL in the same window
-            window.location.href = url;
-          } else {
-            alert('Please enter a valid amount between $10 and $100.');
-          }
-        }}
-      >
-        Proceed to Buy
-      </button>
-    </div>
-  </Modal>
-)}
+          {/* Input for EUR */}
+          <label className="block mb-4">
+            Amount in EUR:
+            <input
+              type="number"
+              min="10"
+              max="92266"
+              value={amountEUR}
+              onChange={(e) => setAmountEUR(e.target.value)}
+              className="block w-full mt-2 p-2 border border-gray-300 rounded"
+            />
+          </label>
+
+          {/* Display Equivalent SOL */}
+          <p className="mb-4">Equivalent in SOL: {amountSOL}</p>
+
+          {/* Button to proceed with the purchase */}
+          <button
+            className="bg-[#219ebc] hover:bg-[#0077b6] text-white font-bold py-2 px-4 rounded"
+            onClick={() => {
+              const url = `https://onramp.gatefi.com/?amount=${amountEUR}&gtfTradeId=...&merchantId=...`;
+              window.location.href = url; // Redirect to the Gatefi URL in the current window
+            }}
+          >
+            Buy Now
+          </button>
+        </div>
+      </Modal>)}
 
 
 
@@ -222,7 +261,12 @@ const WalletDashboard = () => {
                   </div>
                 </Modal>
               )}
+                       { /*  <SPLTokenList publicKey={publicKey}/>*/}
+
             </>
+
+
+
           ) : (
             <p className="text-xl">No wallet connected. Please recover or create a wallet first.</p>
           )}

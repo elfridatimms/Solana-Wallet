@@ -4,6 +4,8 @@ import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'; // Wallet modal for wallet selection
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { clusterApiUrl } from '@solana/web3.js';
+import { MoonPayProvider } from '@moonpay/moonpay-react';
+
 
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
@@ -46,6 +48,10 @@ const App = () => {
       <ConnectionProvider endpoint={network}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
+          <MoonPayProvider
+            apiKey="pk_test_psuOlgPT0LQE4yHGB7CQmOPk6Jj3nJWK"
+            debug
+        >
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/create-wallet" element={<CreateWallet />} />
@@ -57,6 +63,8 @@ const App = () => {
               <Route path="/send-transaction" element={<SendTransaction />} />
 
             </Routes>
+            </MoonPayProvider>
+
           </WalletModalProvider>
         </WalletProvider>
       </ConnectionProvider>
