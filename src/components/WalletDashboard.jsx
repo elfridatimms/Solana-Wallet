@@ -17,12 +17,7 @@ const WalletDashboard = () => {
   const [modalType, setModalType] = useState('');
   const [error, setError] = useState(null);
 
-  const [amountEUR, setAmountEUR] = useState(10);
-  const [amountSOL, setAmountSOL] = useState(0);
-  const [exchangeRate, setExchangeRate] = useState(0);
-
   const [visible, setVisible] = useState(false);
-
 
 
   const connection = new Connection('https://api.devnet.solana.com');
@@ -57,30 +52,6 @@ const WalletDashboard = () => {
   }, [connection]);
 
 
-  // Fetch exchange rate from CoinGecko
-  const fetchExchangeRate = async () => {
-    try {
-      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur');
-      const data = await response.json();
-      if (data.solana && data.solana.eur) {
-        setExchangeRate(data.solana.eur); // Set EUR to SOL rate
-      }
-    } catch (error) {
-      console.error('Error fetching exchange rate:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchExchangeRate(); // Fetch rate when the component mounts
-  }, []);
-
-  useEffect(() => {
-    // Update SOL equivalent when EUR amount or exchange rate changes
-    setAmountSOL((amountEUR / exchangeRate).toFixed(4));
-  }, [amountEUR, exchangeRate]);
-
-
-
   const handleSendClick = () => {
     setModalType('send');
     setModalIsOpen(true);
@@ -94,9 +65,12 @@ const WalletDashboard = () => {
   const handleModalClose = () => setModalIsOpen(false);
 
   const handleBuyCrypto = () => {
-    setModalType('buy');
-    setModalIsOpen(true);
+    setVisible(true);
   };
+
+  const handleCloseOverlay = () => {
+    setVisible(false);
+  }
   
 
   return (
@@ -135,63 +109,19 @@ const WalletDashboard = () => {
                 </button>
               </div>
 
-              <button onClick={() => setVisible(!visible)}>
-            Toggle widget
-        </button>
 
+
+              {/* Modal for buying crypto */}
+              
               <MoonPayBuyWidget
             variant="overlay"
             baseCurrencyCode="usd"
-            baseCurrencyAmount="100"
+            baseCurrencyAmount="100"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
             defaultCurrencyCode="sol"
             visible={visible}
-        />
+            onCloseOverlay={handleCloseOverlay} // Handle the close event here
 
-              {/* Modal for buying crypto */}
-              {modalType === 'buy' && (<Modal
-        isOpen={modalIsOpen}
-        onRequestClose={handleModalClose}
-        className="fixed inset-0 flex items-center justify-center p-4"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
-      >
-        <div className="bg-white p-6 rounded-lg relative">
-          {/* Close Button */}
-          <button className="absolute top-2 right-2 text-black text-2xl font-bold" onClick={handleModalClose}>
-            ×
-          </button>
-
-          <h2 className="text-xl font-semibold mb-4">Buy SOL</h2>
-
-          {/* Input for EUR */}
-          <label className="block mb-4">
-            Amount in EUR:
-            <input
-              type="number"
-              min="10"
-              max="92266"
-              value={amountEUR}
-              onChange={(e) => setAmountEUR(e.target.value)}
-              className="block w-full mt-2 p-2 border border-gray-300 rounded"
-            />
-          </label>
-
-          {/* Display Equivalent SOL */}
-          <p className="mb-4">Equivalent in SOL: {amountSOL}</p>
-
-          {/* Button to proceed with the purchase */}
-          <button
-            className="bg-[#219ebc] hover:bg-[#0077b6] text-white font-bold py-2 px-4 rounded"
-            onClick={() => {
-              const url = `https://onramp.gatefi.com/?amount=${amountEUR}&gtfTradeId=...&merchantId=...`;
-              window.location.href = url; // Redirect to the Gatefi URL in the current window
-            }}
-          >
-            Buy Now
-          </button>
-        </div>
-      </Modal>)}
-
-
+              />
 
               {/* Modal for Send Transaction */}
               {modalType === 'send' && (
