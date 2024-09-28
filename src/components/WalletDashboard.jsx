@@ -7,6 +7,9 @@ import { decryptData } from '../utils/cryptoUtils';
 import { MoonPayBuyWidget } from '@moonpay/moonpay-react';
 import SPLTokenList from './SPLTokenList.jsx';
 
+import * as bip39 from 'bip39';
+import { derivePath } from 'ed25519-hd-key';
+
 
 Modal.setAppElement('#root');
 
@@ -36,7 +39,16 @@ const WalletDashboard = () => {
         }
 
         const decryptedSeed = await decryptData(encryptedSeed, iv, salt, password);
-        const keypair = Keypair.fromSeed(new TextEncoder().encode(decryptedSeed).slice(0, 32));
+        console.log(decryptedSeed)
+       
+        const seed = await bip39.mnemonicToSeed(decryptedSeed);
+
+        // Derive the keypair from the seed
+        const path = "m/44'/501'/0'/0'"; // Standard Solana derivation path
+        const derivedKey = derivePath(path, seed.toString('hex')); // Derive the keypair using the path
+
+        // Create the keypair from the derived key
+        const keypair = Keypair.fromSeed(Buffer.from(derivedKey.key)); // Use the derived key
         
         setPublicKey(keypair.publicKey.toString());
         const balance = await connection.getBalance(keypair.publicKey);
