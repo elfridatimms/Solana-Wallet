@@ -10,6 +10,8 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import * as bip39 from 'bip39';
 import { derivePath } from 'ed25519-hd-key';
 import axios from 'axios';
+import { Buffer } from 'buffer';
+
 
 Modal.setAppElement('#root');
 
