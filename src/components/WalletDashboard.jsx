@@ -10,6 +10,8 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import * as bip39 from 'bip39';
 import { derivePath } from 'ed25519-hd-key'; // Use for correct Solana key derivation
 import axios from 'axios';
+import { Buffer } from 'buffer';
+
 import { useLocation } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider.jsx';
 
@@ -320,10 +322,11 @@ const WalletDashboard = () => {
             </>
           ) : (
             <p>Loading wallet information...</p>
-          )}
+          )
+          }
         </>
       )}
-    </div>
+    </div >
   );
 };
 
