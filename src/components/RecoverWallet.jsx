@@ -4,6 +4,7 @@ import { Keypair, Connection } from '@solana/web3.js';
 import { useNavigate } from 'react-router-dom';
 import bip39 from 'bip39-light';
 import { derivePath } from 'ed25519-hd-key'; // For proper key derivation for Solana wallets
+import { useSeed } from './SeedContextProvider';
 
 // Function to derive the keypair from the seed using correct derivation path
 export async function deriveKeypairFromSeed(mnemonic) {
@@ -12,7 +13,7 @@ export async function deriveKeypairFromSeed(mnemonic) {
 
     // Use BIP44 derivation path for Solana
     const path = "m/44'/501'/0'/0'"; // Solana-specific derivation path
-    const derivedSeed = derivePath(path, seed.toString('hex')).key; // Get derived private key
+    const derivedSeed = derivePath(path, seed).key; // Get derived private key
 
     // Return the Keypair
     return Keypair.fromSeed(derivedSeed);
@@ -70,7 +71,7 @@ async function getKeyMaterial(password) {
 }
 
 const RecoverWallet = () => {
-    const [seedPhrase, setSeedPhrase] = useState(new Array(12).fill('')); // 12 fields for recovery phrase
+    const [seedPhrase, setSeedPhrase] = useSeed(); // 12 fields for recovery phrase
     const [error, setError] = useState('');
     const [pasteSuccess, setPasteSuccess] = useState('');
     const [fileSuccess, setFileSuccess] = useState('');
@@ -144,19 +145,10 @@ const RecoverWallet = () => {
             // Derive the keypair from the mnemonic using correct derivation path
             const keypair = await deriveKeypairFromSeed(mnemonic);
 
-            // Encrypt the seed phrase using the password from localStorage
-            const password = localStorage.getItem('walletPassword');
-            const { encryptedData, iv, salt } = await encryptSeed(mnemonic, password);
-
-            // Store the encrypted seed, iv, and salt in localStorage
-            localStorage.setItem('encryptedSeed', JSON.stringify(Array.from(new Uint8Array(encryptedData))));
-            localStorage.setItem('iv', JSON.stringify(Array.from(iv)));
-            localStorage.setItem('salt', JSON.stringify(Array.from(salt))); // Store the salt
 
             // Display the public key for the recovered wallet
             setPublicKeyDisplay(keypair.publicKey.toString());
             console.log("Public Key Generated:", keypair.publicKey.toString());
-            console.log('normalize exists:', !!String.prototype.normalize);
 
             // Navigate to password setup after successful wallet recovery
             navigate('/password-setup');

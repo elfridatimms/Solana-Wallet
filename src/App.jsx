@@ -13,6 +13,7 @@ import WalletDashboard from './components/WalletDashboard.jsx';
 import SendTransaction from './components/SendTransaction.jsx';
 import VerifySeed from './components/VerifySeed.jsx';
 import PasswordSetup from './components/PasswordSetup.jsx';
+import SeedContextProvider from './components/SeedContextProvider.jsx';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -48,21 +49,24 @@ const App = () => {
       <ConnectionProvider endpoint={network}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
-          <MoonPayProvider
-            apiKey="pk_test_psuOlgPT0LQE4yHGB7CQmOPk6Jj3nJWK"
-            debug
-        >
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/create-wallet" element={<CreateWallet />} />
-              <Route path="/recover-wallet" element={<RecoverWallet />} />
-              <Route path="/verify-seed" element={<VerifySeed />} />
-              <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
-              <Route path="/dashboard" element={<WalletDashboard />} />
+            <MoonPayProvider
+              apiKey="pk_test_psuOlgPT0LQE4yHGB7CQmOPk6Jj3nJWK"
+              debug
+            >
+              <SeedContextProvider>
 
-              <Route path="/send-transaction" element={<SendTransaction />} />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/create-wallet" element={<CreateWallet />} />
+                  <Route path="/recover-wallet" element={<RecoverWallet />} />
+                  <Route path="/verify-seed" element={<VerifySeed />} />
+                  <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
+                  <Route path="/dashboard" element={<WalletDashboard />} />
 
-            </Routes>
+                  <Route path="/send-transaction" element={<SendTransaction />} />
+
+                </Routes>
+              </SeedContextProvider>
             </MoonPayProvider>
 
           </WalletModalProvider>

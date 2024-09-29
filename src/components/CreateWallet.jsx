@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import * as bip39 from 'bip39';
-import { Keypair, Connection } from '@solana/web3.js'; // Import Solana Web3 for wallet derivation and connection
+import { Keypair, Connection, clusterApiUrl } from '@solana/web3.js'; // Import Solana Web3 for wallet derivation and connection
 import { derivePath } from 'ed25519-hd-key'; // Import to derive the correct Solana key
 import { useNavigate } from 'react-router-dom';
+import { useSeed } from './SeedContextProvider';
 
 const CreateWallet = () => {
-    const [seedPhrase, setSeedPhrase] = useState([]);
+    const [seedPhrase, setSeedPhrase] = useSeed();
     const [publicKey, setPublicKey] = useState(null);
     const [copySuccess, setCopySuccess] = useState('');
     const [accountCreated, setAccountCreated] = useState(false); // Track if account is created
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const connection = new Connection('https://api.devnet.solana.com', 'confirmed'); // Use devnet for testing
+    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
     // Generate the seed phrase and derive wallet when the component mounts
     useEffect(() => {
@@ -25,7 +26,7 @@ const CreateWallet = () => {
                 // Derive the wallet using BIP44 path for Solana
                 const seed = await bip39.mnemonicToSeed(mnemonic); // Converts mnemonic to seed buffer
                 const path = `m/44'/501'/0'/0'`; // Standard BIP44 derivation path for Solana
-                const derivedSeed = derivePath(path, seed.toString('hex')).key;
+                const derivedSeed = derivePath(path, seed).key;
 
                 // Create a Keypair from the derived seed
                 const derivedKeypair = Keypair.fromSeed(derivedSeed.slice(0, 32));
@@ -38,7 +39,7 @@ const CreateWallet = () => {
                 setPublicKey(derivedKeypair.publicKey.toString());
 
                 // Request an airdrop (only on devnet) to activate the account
-                const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 1 * 1e9); // Request 1 SOL
+                const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 2 * 1e9); // Request 1 SOL
                 await connection.confirmTransaction(airdropSignature, 'confirmed');
                 setAccountCreated(true); // Account successfully created and funded
             } catch (err) {

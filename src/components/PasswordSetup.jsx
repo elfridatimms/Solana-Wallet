@@ -1,35 +1,40 @@
-// src/components/PasswordSetup.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSeed } from './SeedContextProvider';
+import { encryptSeed } from './RecoverWallet';
 
 const PasswordSetup = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [seed] = useSeed();
     const navigate = useNavigate();
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;
         }
+        const { encryptedData, iv, salt } = await encryptSeed(seed, password);
 
-        // Store password securely (Note: never store in plaintext in production!)
-        localStorage.setItem('walletPassword', password);
+        localStorage.setItem('encryptedSeed', JSON.stringify(Array.from(new Uint8Array(encryptedData))));
+        localStorage.setItem('iv', JSON.stringify(Array.from(iv)));
+        localStorage.setItem('salt', JSON.stringify(Array.from(salt)));
 
-        // Redirect to the dashboard after password setup
-        navigate('/dashboard');
+        navigate('/dashboard', { state: { password } });
     };
 
     return (
         <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6">
             <div className="max-w-sm w-full bg-white rounded-lg shadow-lg p-6">
-                <h1 className="text-2xl font-bold mb-4 text-center">Set Up Your Wallet Password</h1>
+                <h1 className="text-2xl font-bold mb-4 text-center">
+                    Set Up Your Wallet Password
+                </h1>
 
                 <input
                     type="password"
                     placeholder="Enter password"
-                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"  // Dodali smo text-black klasu
+                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -37,7 +42,7 @@ const PasswordSetup = () => {
                 <input
                     type="password"
                     placeholder="Confirm password"
-                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"  // Dodali smo text-black klasu
+                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
