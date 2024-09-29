@@ -14,6 +14,7 @@ import SendTransaction from './components/SendTransaction.jsx';
 import VerifySeed from './components/VerifySeed.jsx';
 import PasswordSetup from './components/PasswordSetup.jsx';
 import SeedContextProvider from './components/SeedContextProvider.jsx';
+import Login from './components/Login.jsx';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -30,9 +31,9 @@ const Home = () => {
         </button>
         <button
           className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
-          onClick={() => navigate('/recover-wallet')}
+          onClick={() => navigate('/login')}
         >
-          I ALREADY HAVE A WALLET
+          LOGIN
         </button>
       </div>
     </div>
@@ -59,6 +60,7 @@ const App = () => {
                   <Route path="/" element={<Home />} />
                   <Route path="/create-wallet" element={<CreateWallet />} />
                   <Route path="/recover-wallet" element={<RecoverWallet />} />
+                  <Route path="/login" element={<Login />} />
                   <Route path="/verify-seed" element={<VerifySeed />} />
                   <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
                   <Route path="/dashboard" element={<WalletDashboard />} />

@@ -27,16 +27,20 @@ const WalletDashboard = () => {
   const [visible, setVisible] = useState(false);
   const location = useLocation();
   const password = location.state?.password;
-  const [seed2] = useSeed();
+  const username = location.state?.username;
 
   const { connection } = useConnection();
   useEffect(() => {
     const retrieveAndDecryptSeed = async () => {
       try {
         // Retrieve encrypted data from local storage
-        const encryptedSeed = JSON.parse(localStorage.getItem('encryptedSeed'));
-        const iv = JSON.parse(localStorage.getItem('iv'));
-        const salt = JSON.parse(localStorage.getItem('salt'));
+        const user = JSON.parse(localStorage.getItem(username))
+        if (!user) {
+          setError("couldn't find user for username: ", username)
+        }
+        const encryptedSeed = user.encryptedSeed;
+        const iv = user.iv;
+        const salt = user.salt;
 
         console.log('Encrypted Seed:', encryptedSeed);
         console.log('IV:', iv);
@@ -68,7 +72,6 @@ const WalletDashboard = () => {
         } catch (error) {
           console.error("can't decrypt data:", error);
         }
-        console.log("decrypted seed:", decryptedSeed, decryptedSeed.replaceAll(",", " "), seed2);
 
         if (!bip39.validateMnemonic(decryptedSeed.replaceAll(",", " "))) {
           console.error("Invalid mnemonic after decryption");

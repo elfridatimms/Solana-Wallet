@@ -4,6 +4,7 @@ import { useSeed } from './SeedContextProvider';
 import { encryptSeed } from './RecoverWallet';
 
 const PasswordSetup = () => {
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
@@ -15,13 +16,21 @@ const PasswordSetup = () => {
             setError('Passwords do not match');
             return;
         }
+        let user = localStorage.getItem(username);
+        if (user !== null) {
+            setError("Username is already taken");
+            return;
+        }
         const { encryptedData, iv, salt } = await encryptSeed(seed, password);
+        const newUser = {
+            iv: Array.from(iv),
+            salt: Array.from(salt),
+            encryptedSeed: Array.from(new Uint8Array(encryptedData))
+        }
 
-        localStorage.setItem('encryptedSeed', JSON.stringify(Array.from(new Uint8Array(encryptedData))));
-        localStorage.setItem('iv', JSON.stringify(Array.from(iv)));
-        localStorage.setItem('salt', JSON.stringify(Array.from(salt)));
+        localStorage.setItem(username, JSON.stringify(newUser));
 
-        navigate('/dashboard', { state: { password } });
+        navigate('/dashboard', { state: { password, username } });
     };
 
     return (
@@ -30,6 +39,14 @@ const PasswordSetup = () => {
                 <h1 className="text-2xl font-bold mb-4 text-center">
                     Set Up Your Wallet Password
                 </h1>
+
+                <input
+                    type="username"
+                    placeholder="Enter username"
+                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                />
 
                 <input
                     type="password"

@@ -87,7 +87,11 @@ export async function encryptSeed(seedPhrase, password) {
     }
 }
 
-// Decrypt the seed phrase
+/**
+FIXME decrypt seed method is not returning space delimited
+but it is returnin comma delimited string
+or it can return Array<Uint8>
+Decrypt the seed phrase */
 export async function decryptData(encryptedData, iv, salt, password) {
     try {
         const encoder = new TextEncoder();
