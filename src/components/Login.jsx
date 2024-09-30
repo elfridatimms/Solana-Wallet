@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { decryptData } from '../utils/cryptoUtils'; // Adjust the path based on your folder structure
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -7,21 +8,47 @@ const Login = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
     const handleSubmit = async () => {
+        // Retrieve user data from localStorage
         const user = localStorage.getItem(username);
-        if (!user === null) {
+        console.log("User from localStorage:", user); // Debugging
+
+        if (user === null) {
             setError('User not found');
             return;
         }
-        const { encryptedSeed, iv, salt } = user;
+
+        // Parse user data
+        let userData;
+        try {
+            userData = JSON.parse(user);
+            console.log("Parsed user data:", userData); // Debugging
+        } catch (parseError) {
+            setError('Failed to parse user data.');
+            console.error('JSON Parse Error:', parseError);
+            return;
+        }
+
+        const { encryptedSeed, iv, salt } = userData;
+        console.log("Encrypted Seed:", encryptedSeed);
+        console.log("IV:", iv);
+        console.log("Salt:", salt);
+
+        // Decrypt the seed
         let decryptedSeed;
         try {
             decryptedSeed = await decryptData(encryptedSeed, iv, salt, password);
+            console.log("Decrypted seed:", decryptedSeed); // Debugging
         } catch (error) {
+            console.error("Decryption failed:", error);
             setError("Wrong password");
             return;
         }
-        navigate('/dashboard', { state: { password, username } });
+
+        // Navigate to the dashboard securely
+        navigate('/dashboard', { state: { username, password } });
     };
+
+
     return (
         <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6">
             <div className="max-w-sm w-full bg-white rounded-lg shadow-lg p-6">

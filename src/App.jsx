@@ -27,13 +27,13 @@ const Home = () => {
           className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
           onClick={() => navigate('/create-wallet')}
         >
-          I NEED A NEW WALLET
+          CREATE A NEW WALLET
         </button>
         <button
           className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
           onClick={() => navigate('/login')}
         >
-          LOGIN
+          LOGIN IN YOUR WALLET
         </button>
       </div>
     </div>
