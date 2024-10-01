@@ -59,7 +59,7 @@ const SPLTokenList = ({ publicKey }) => {
   };
 
   return (
-    <div className=" bg-[#313133]  rounded-lg ">
+    <div className=" bg-[#313133]  rounded-lg shadow-lg">
       <h3 className="text-2xl font-bold text-white mb-4">SPL Tokens</h3>
 
       <ul className="space-y-4">
@@ -80,12 +80,12 @@ const SPLTokenList = ({ publicKey }) => {
             <li key={index} className="bg-[#3d3d3f] p-4 rounded-lg flex justify-between items-center">
               <div className="flex items-center">
                 {token.logo ? (
-                  <img src={token.tokenlogo} alt={`${token.tokenname} logo`} className="h-8 w-8 mr-2" />
+                  <img src={token.logo} alt={`${token.name} logo`} className="h-8 w-8 mr-2" />
                 ) : (
                   <div className="h-8 w-8 mr-2 bg-gray-600 rounded-full" />
                 )}
                 <div>
-                  <div className="text-white font-semibold">{token.tokenname || token.mint}</div>
+                  <div className="text-white font-semibold">{token.name || token.mint}</div>
                   <div className="text-gray-400">Amount: {token.amount}</div>
                 </div>
               </div>
