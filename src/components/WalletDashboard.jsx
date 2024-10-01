@@ -16,10 +16,6 @@ import { useSeed } from './SeedContextProvider.jsx';
 import { Link } from 'react-router-dom';
 import Header from './Header.jsx';
 
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Faq from './Faq';
-import Support from './Support';
-import Terms from './Terms';
 
 
 Modal.setAppElement('#root');

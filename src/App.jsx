@@ -15,6 +15,10 @@ import VerifySeed from './components/VerifySeed.jsx';
 import PasswordSetup from './components/PasswordSetup.jsx';
 import SeedContextProvider from './components/SeedContextProvider.jsx';
 import Login from './components/Login.jsx';
+import Faq from './components/Faq.jsx';
+import Support from './components/Support.jsx';
+import Terms from './components/Terms.jsx';
+
 
 const Home = () => {
   const navigate = useNavigate();
@@ -66,6 +70,9 @@ const App = () => {
                   <Route path="/dashboard" element={<WalletDashboard />} />
 
                   <Route path="/send-transaction" element={<SendTransaction />} />
+            <Route path="/faq" element={<Faq />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/terms" element={<Terms />} />
 
                 </Routes>
               </SeedContextProvider>
