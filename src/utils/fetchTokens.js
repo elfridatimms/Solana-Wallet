@@ -1,6 +1,7 @@
 import { Connection, PublicKey } from '@solana/web3.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { TokenListProvider } from '@solana/spl-token-registry';
+import { TokenListProvider, ENV } from '@solana/spl-token-registry';
+import { Metaplex } from '@metaplex-foundation/js'; // Import Metaplex
 
 export const fetchTokens = async (publicKey, connection) => {
   try {
@@ -11,41 +12,59 @@ export const fetchTokens = async (publicKey, connection) => {
       }
     );
 
-    // Fetch the token list from the Solana Token Registry
-    const tokenListProvider = new TokenListProvider();
-    const tokenListContainer = await tokenListProvider.resolve();
+    // Initialize Metaplex
+    const metaplex = Metaplex.make(connection);
 
-    // Access the tokenList property, which is an array
-    const tokenList = tokenListContainer?.getList() || []; // Get the array of tokens or empty array if undefined
+    // Determine which environment to use based on the connection URL
+  const connectionUrl = connection.rpcEndpoint;
+  const environment = connectionUrl.includes("devnet") ? ENV.Devnet : ENV.MainnetBeta;
 
-    // Ensure tokenList is an array
-    if (!Array.isArray(tokenList)) {
-      console.error('tokenList is not an array:', tokenList);
-      return []; // Return an empty array if not
-    }
-
-    // Filter for Solana tokens
-    const tokensList = tokenList.filter(token => token.chainId === 101); // Assuming 101 is the chainId for Solana
-
-    // Log the tokenAccounts and tokensList to understand their structure
-    console.log('Token Accounts:', tokenAccounts);
-    console.log('Tokens List:', tokensList);
-
-    const tokens = tokenAccounts.value.map(({ account }) => {
+    // Use Promise.all to fetch token data
+    const tokens = await Promise.all(tokenAccounts.value.map(async ({ account }) => {
       const mint = account.data.parsed.info.mint;
       const amount = account.data.parsed.info.tokenAmount.uiAmount;
 
-      // Look up token metadata
-      const tokenData = tokensList.find(token => token.address === mint) || {};
+      let tokenName = mint; // Fallback to mint address
+      let tokenSymbol = '';
+      let tokenLogo = null;
+
+      try {
+        // Fetch metadata using Metaplex
+        const metadataAccount = metaplex.nfts().pdas().metadata({ mint: new PublicKey(mint) });
+        const metadataAccountInfo = await connection.getAccountInfo(metadataAccount);
+
+        if (metadataAccountInfo) {
+          const token = await metaplex.nfts().findByMint({ mintAddress: new PublicKey(mint) });
+          tokenName = token.name;
+          tokenSymbol = token.symbol;
+          tokenLogo = token.json?.image;
+        } else {
+          // If metadata is not found, fall back to Token List Provider
+          const provider = await new TokenListProvider().resolve();
+          const tokenList = provider.filterByChainId(environment).getList();
+          const tokenMap = tokenList.reduce((map, item) => {
+            map.set(item.address, item);
+            return map;
+          }, new Map());
+
+          const token = tokenMap.get(mint);
+          if (token) {
+            tokenName = token.name;
+            tokenSymbol = token.symbol;
+            tokenLogo = token.logoURI;
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching metadata for mint', mint, error);
+      }
+
       return {
         mint,
         amount,
-        name: tokenData.symbol || mint,  // Use symbol if available, otherwise fallback to mint address
-        logo: tokenData.logoURI || null, // Use logoURI if available
+        name: tokenName,  // Use tokenName fetched from metadata or fallback
+        logo: tokenLogo,  // Use logo fetched from metadata or fallback
       };
-    });
-
-    console.log('Tokens:', tokens); // Log the final tokens array
+    }));
 
     return tokens;
   } catch (error) {

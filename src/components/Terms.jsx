@@ -1,17 +1,34 @@
 import React from 'react';
+import Header from './Header';
 
 const Terms = () => {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Terms and Conditions</h1>
-      <p>By using this application, you agree to the following terms and conditions:</p>
-      <ul className="list-disc ml-8">
-        <li>You are responsible for keeping your private keys secure.</li>
-        <li>We are not liable for any losses due to the misuse of this application.</li>
-        <li>Ensure that you understand how cryptocurrency and blockchain work before using the wallet.</li>
-      </ul>
-      {/* Add more terms as needed */}
-    </div>
+    <>
+      <Header />
+      <div className="p-8 bg-[#4e4f51] min-h-screen">
+        {/* Term 1 */}
+        <div className="mb-6 p-6 bg-[#313133] rounded-lg shadow-lg transition-transform transform hover:scale-105">
+          <h2 className="text-2xl font-semibold text-[#e0e0e0] hover:text-[#00d0c6] transition-colors duration-200">
+            Terms of Service
+          </h2>
+          <p className="mt-2 text-[#b0b0b0]">
+            By using this application, you agree to the terms outlined in our service agreement.
+          </p>
+        </div>
+
+        {/* Term 2 */}
+        <div className="mb-6 p-6 bg-[#313133] rounded-lg shadow-lg transition-transform transform hover:scale-105">
+          <h2 className="text-2xl font-semibold text-[#e0e0e0] hover:text-[#00d0c6] transition-colors duration-200">
+            Privacy Policy
+          </h2>
+          <p className="mt-2 text-[#b0b0b0]">
+            We value your privacy and are committed to protecting your personal information.
+          </p>
+        </div>
+
+        {/* Add more terms as needed */}
+      </div>
+    </>
   );
 };
 

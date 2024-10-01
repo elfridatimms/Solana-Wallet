@@ -1,12 +1,34 @@
 import React from 'react';
+import Header from './Header';
 
 const Support = () => {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Support</h1>
-      <p>If you need support, please contact us at <a href="mailto:support@example.com" className="text-blue-500 hover:underline">support@example.com</a>.</p>
-      <p>We are here to help you with any issues or questions you may have regarding the application.</p>
-    </div>
+    <>
+      <Header />
+      <div className="p-8 bg-[#4e4f51] min-h-screen">
+        {/* Support 1 */}
+        <div className="mb-6 p-6 bg-[#313133] rounded-lg shadow-lg transition-transform transform hover:scale-105">
+          <h2 className="text-2xl font-semibold text-[#e0e0e0] hover:text-[#00d0c6] transition-colors duration-200">
+            How can I get support?
+          </h2>
+          <p className="mt-2 text-[#b0b0b0]">
+            You can reach out to our support team via the contact form on our website.
+          </p>
+        </div>
+
+        {/* Support 2 */}
+        <div className="mb-6 p-6 bg-[#313133] rounded-lg shadow-lg transition-transform transform hover:scale-105">
+          <h2 className="text-2xl font-semibold text-[#e0e0e0] hover:text-[#00d0c6] transition-colors duration-200">
+            What hours is support available?
+          </h2>
+          <p className="mt-2 text-[#b0b0b0]">
+            Our support team is available 24/7 to assist you with your inquiries.
+          </p>
+        </div>
+
+        {/* Add more support items as needed */}
+      </div>
+    </>
   );
 };
 

@@ -12,6 +12,7 @@
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+    "@metaplex-foundation/js": "^0.20.1",
     "@moonpay/moonpay-js": "^0.6.1",
     "@moonpay/moonpay-react": "^1.8.0",
     "@sentry/react": "^8.32.0",
@@ -40,6 +41,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
     "react-modal": "^3.16.1",
     "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.26.2",

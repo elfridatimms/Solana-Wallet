@@ -15,6 +15,8 @@ import { useLocation } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider.jsx';
 import { Link } from 'react-router-dom';
 import Header from './Header.jsx';
+import { FaQuestionCircle, FaHeadset, FaFileAlt, FaCopy } from 'react-icons/fa'; // Import icons
+
 
 
 
@@ -178,33 +180,51 @@ const WalletDashboard = () => {
     setVisible(false);
   };
 
+const handleCopy = () => {
+    navigator.clipboard.writeText(publicKey)
+      .then(() => {
+        alert('Public key copied to clipboard!'); // You can replace this with a toast notification
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+  };
+
   return (
     <>
     <Header />
-   
-         
-       
-
-    <div className="min-h-screen bg-[#4e4f51] text-white flex flex-col p-6 space-y-8">
+      <div className="min-h-screen bg-[#4e4f51] text-white flex flex-col p-6 space-y-8">
       
       <div className="flex flex-row space-x-6">
         {/* Aside Section */}
-        <aside className="w-1/4 bg-[#313133]  p-6 rounded-lg shadow-lg text-left max-w-md">
+        <aside className="w-1/4 bg-[#313133] p-6 rounded-lg shadow-lg text-left max-w-md">
           <h3 className="text-xl font-semibold mb-4 text-white">Useful Links</h3>
           <ul className="space-y-2">
             <li>
-              <Link to="/faq" className="text-[#f4f9f9] hover:underline">
-                Frequently Asked Questions
+              <Link 
+                to="/faq" 
+                className="flex items-center p-3 rounded-lg transition duration-200 hover:bg-[#4b4c4f]"
+              >
+                <FaQuestionCircle className="mr-2" /> {/* Icon */}
+                <span className="text-lg">FAQ</span> {/* Enhanced Font Size */}
               </Link>
             </li>
             <li>
-              <Link to="/support" className="text-[#f4f9f9] hover:underline">
-                Support
+              <Link 
+                to="/support" 
+                className="flex items-center p-3 rounded-lg transition duration-200 hover:bg-[#4b4c4f]"
+              >
+                <FaHeadset className="mr-2" /> {/* Icon */}
+                <span className="text-lg">Support</span> {/* Enhanced Font Size */}
               </Link>
             </li>
             <li>
-              <Link to="/terms" className="text-[#f4f9f9] hover:underline">
-                Terms and Conditions
+              <Link 
+                to="/terms" 
+                className="flex items-center p-3 rounded-lg transition duration-200 hover:bg-[#4b4c4f]"
+              >
+                <FaFileAlt className="mr-2" /> {/* Icon */}
+                <span className="text-lg">Terms</span> {/* Enhanced Font Size */}
               </Link>
             </li>
           </ul>
@@ -223,9 +243,14 @@ const WalletDashboard = () => {
                     {/* Wallet Info */}
                     <div className="bg-[#313133] p-6 rounded-lg shadow-lg text-left w-full max-w-3xl">
                       <p className="text-xs font-medium mb-1 text-gray-400">Public Key:</p>
-                      <p className="bg-[#494e51] text-black font-mono p-1 rounded break-words text-sm">
-                        {publicKey}
-                      </p>
+                      <p className="bg-[#494e51] text-black font-mono p-1 rounded break-words text-sm flex items-center justify-between">
+      <span>{publicKey}</span>
+      <FaCopy 
+        onClick={handleCopy}
+        className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors duration-200"
+        title="Copy Public Key"
+      />
+    </p>
                       <p className="mt-3 text-3xl font-medium text-white">
                         {balance !== null ? (
                           <span> $  
