@@ -6,6 +6,7 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adap
 import { clusterApiUrl } from '@solana/web3.js';
 import { MoonPayProvider } from '@moonpay/moonpay-react';
 
+import Home from './components/Home'; // Import the separated Home component
 
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
@@ -20,29 +21,6 @@ import Support from './components/Support.jsx';
 import Terms from './components/Terms.jsx';
 
 
-const Home = () => {
-  const navigate = useNavigate();
-
-  return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold mb-8">Solana Wallet Onboarding</h1>
-      <div className="flex space-x-8">
-        <button
-          className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
-          onClick={() => navigate('/create-wallet')}
-        >
-          CREATE A NEW WALLET
-        </button>
-        <button
-          className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-3 px-6 rounded-md transition"
-          onClick={() => navigate('/login')}
-        >
-          LOGIN IN YOUR WALLET
-        </button>
-      </div>
-    </div>
-  );
-};
 
 const App = () => {
   const network = clusterApiUrl('devnet'); // For testing
@@ -70,9 +48,9 @@ const App = () => {
                   <Route path="/dashboard" element={<WalletDashboard />} />
 
                   <Route path="/send-transaction" element={<SendTransaction />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/terms" element={<Terms />} />
+                  <Route path="/faq" element={<Faq />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/terms" element={<Terms />} />
 
                 </Routes>
               </SeedContextProvider>
