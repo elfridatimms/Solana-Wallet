@@ -10,10 +10,17 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import * as bip39 from 'bip39';
 import { derivePath } from 'ed25519-hd-key'; // Use for correct Solana key derivation
 import axios from 'axios';
-import { Buffer } from 'buffer';
 
 import { useLocation } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider.jsx';
+import { Link } from 'react-router-dom';
+import Header from './Header.jsx';
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Faq from './Faq';
+import Support from './Support';
+import Terms from './Terms';
+
 
 Modal.setAppElement('#root');
 
@@ -176,69 +183,103 @@ const WalletDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6 space-y-8">
-      <h1 className="text-5xl font-bold mb-8 tracking-wider text-[#f4f9f9]">Wallet Dashboard</h1>
-      {error ? (
-        <p className="text-red-500 text-xl">{error}</p>
-      ) : (
-        <>
-          {publicKey ? (
+    <>
+    <Header />
+   
+         
+       
+
+    <div className="min-h-screen bg-[#4e4f51] text-white flex flex-col p-6 space-y-8">
+      
+      <div className="flex flex-row space-x-6">
+        {/* Aside Section */}
+        <aside className="w-1/4 bg-[#313133]  p-6 rounded-lg shadow-lg text-left max-w-md">
+          <h3 className="text-xl font-semibold mb-4 text-white">Useful Links</h3>
+          <ul className="space-y-2">
+            <li>
+              <Link to="/faq" className="text-[#f4f9f9] hover:underline">
+                Frequently Asked Questions
+              </Link>
+            </li>
+            <li>
+              <Link to="/support" className="text-[#f4f9f9] hover:underline">
+                Support
+              </Link>
+            </li>
+            <li>
+              <Link to="/terms" className="text-[#f4f9f9] hover:underline">
+                Terms and Conditions
+              </Link>
+            </li>
+          </ul>
+        </aside>
+  
+        {/* Main Content */}
+        <div className="flex-grow">
+          {error ? (
+            <p className="text-red-500 text-xl">{error}</p>
+          ) : (
             <>
-              {/* Wallet Info */}
-              <div className="bg-[#1e2a34] p-6 rounded-lg shadow-lg text-left max-w-md w-full mx-auto">
-                <p className="text-xs font-medium mb-1 text-gray-400">Public Key:</p>
-                <p className="bg-[#f0f4f8] text-black font-mono p-1 rounded break-words text-sm">
-                  {publicKey}
-                </p>
-                <p className="mt-3 text-3xl font-medium text-white">
-                  {balance !== null ? (
-                    <span>
-                      {balance.toFixed(2)}{' '}
-                      <span className="text-lg font-normal">SOL</span> ($
-                      {solPrice !== null
-                        ? (balance * solPrice).toFixed(2)
-                        : 'Fetching price...'}
-                      )
-                    </span>
-                  ) : (
-                    'Fetching balance...'
-                  )}
-                </p>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex space-x-4 mt-8">
-                <button
-                  className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
-                  onClick={handleBuyCrypto}
-                >
-                  Buy Crypto
-                </button>
-                <button
-                  className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
-                  onClick={handleReceiveClick}
-                >
-                  Receive
-                </button>
-                <button
-                  className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
-                  onClick={handleSendClick}
-                >
-                  Send
-                </button>
-              </div>
-
-              {/* Modal for buying crypto */}
-              <MoonPayBuyWidget
-                variant="overlay"
-                baseCurrencyCode="usd"
-                baseCurrencyAmount="100"
-                defaultCurrencyCode="sol"
-                visible={visible}
-                onCloseOverlay={handleCloseOverlay}
-              />
-
-              {/* Modal for Send Transaction */}
+              {publicKey ? (
+                <>
+                  {/* Wallet Info and SPL Tokens */}
+                  <div className="flex flex-col items-center space-y-8">
+                    {/* Wallet Info */}
+                    <div className="bg-[#313133] p-6 rounded-lg shadow-lg text-left w-full max-w-3xl">
+                      <p className="text-xs font-medium mb-1 text-gray-400">Public Key:</p>
+                      <p className="bg-[#494e51] text-black font-mono p-1 rounded break-words text-sm">
+                        {publicKey}
+                      </p>
+                      <p className="mt-3 text-3xl font-medium text-white">
+                        {balance !== null ? (
+                          <span> $  
+                            {solPrice !== null ? (balance * solPrice).toFixed(2): 'Fetching price...'}  
+                          </span>
+                        ) : (
+                          'Fetching balance...'
+                        )}
+                      </p>
+  
+                      {/* Action Buttons */}
+                      <div className="flex space-x-4 mt-8">
+                        <button
+                          className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                          onClick={handleBuyCrypto}
+                        >
+                          Buy Crypto
+                        </button>
+                        <button
+                          className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                          onClick={handleReceiveClick}
+                        >
+                          Receive
+                        </button>
+                        <button
+                          className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                          onClick={handleSendClick}
+                        >
+                          Send
+                        </button>
+                      </div>
+                    </div>
+  
+                    {/* SPL Token List */}
+                    <div className="bg-[#313133]  p-6 rounded-lg shadow-lg text-left w-full max-w-3xl">
+                      <SPLTokenList publicKey={publicKey} />
+                    </div>
+                  </div>
+  
+                  {/* Modal for buying crypto */}
+                  <MoonPayBuyWidget
+                    variant="overlay"
+                    baseCurrencyCode="usd"
+                    baseCurrencyAmount="100"
+                    defaultCurrencyCode="sol"
+                    visible={visible}
+                    onCloseOverlay={handleCloseOverlay}
+                  />
+  
+                     {/* Modal for Send Transaction */}
               {modalType === 'send' && (
                 <Modal
                   isOpen={modalIsOpen}
@@ -294,7 +335,9 @@ const WalletDashboard = () => {
                 </Modal>
               )}
 
-              {/* Modal for Receive Info */}
+
+  
+                  {/* Modal for Receive Info */}
               {modalType === 'receive' && (
                 <Modal
                   isOpen={modalIsOpen}
@@ -319,18 +362,18 @@ const WalletDashboard = () => {
                   </div>
                 </Modal>
               )}
-
-              {/* SPL Token List */}
-              <SPLTokenList publicKey={publicKey} />
+                </>
+              ) : (
+                <p>Loading wallet information...</p>
+              )}
             </>
-          ) : (
-            <p>Loading wallet information...</p>
-          )
-          }
-        </>
-      )}
-    </div >
+          )}
+        </div>
+      </div>
+    </div>
+    </>
   );
+  
 };
 
 export default WalletDashboard;

@@ -59,12 +59,12 @@ const SPLTokenList = ({ publicKey }) => {
   };
 
   return (
-    <div className="p-6 bg-gray-900 rounded-lg shadow-lg">
+    <div className=" bg-[#313133]  rounded-lg shadow-lg">
       <h3 className="text-2xl font-bold text-white mb-4">SPL Tokens</h3>
 
       <ul className="space-y-4">
         {solBalance !== null && (
-          <li className="bg-gray-800 p-4 rounded-lg border border-gray-700 flex justify-between items-center">
+          <li className="bg-[#3d3d3f]  p-4 rounded-lg flex justify-between items-center">
             <div>
               <div className="text-white font-semibold">Solana (SOL)</div>
               <div className="text-gray-400">Amount: {solBalance.toFixed(2)}</div>
@@ -77,7 +77,7 @@ const SPLTokenList = ({ publicKey }) => {
 
         {tokens.length > 0 ? (
           tokens.map((token, index) => (
-            <li key={index} className="bg-gray-800 p-4 rounded-lg border border-gray-700 flex justify-between items-center">
+            <li key={index} className="bg-[#3d3d3f] p-4 rounded-lg flex justify-between items-center">
               <div className="flex items-center">
                 {token.logo ? (
                   <img src={token.logo} alt={`${token.name} logo`} className="h-8 w-8 mr-2" />
