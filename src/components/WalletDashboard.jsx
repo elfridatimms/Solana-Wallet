@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import SendTransaction from './SendTransaction';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { sendTransaction } from '../utils/sendTransaction';
 import QRCode from 'react-qr-code';
 import Modal from 'react-modal';
 import { decryptData } from '../utils/cryptoUtils';
@@ -30,9 +30,14 @@ const WalletDashboard = () => {
   const [modalType, setModalType] = useState('');
   const [error, setError] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [recipientAddress, setRecipientAddress] = useState('');
+  const [amount, setAmount] = useState('');
+  const [myKeyPair, setMyKeypair] = useState('');
+
   const location = useLocation();
   const password = location.state?.password;
   const username = location.state?.username;
+
 
   const { connection } = useConnection();
   useEffect(() => {
@@ -94,6 +99,8 @@ const WalletDashboard = () => {
         // Create Solana keypair from derived seed
         const keypair = Keypair.fromSeed(derived.key.subarray(0, 32));
         console.log('Keypair Public Key:', keypair.publicKey.toString());
+
+        setMyKeypair(keypair);
 
         // Set the public key state
         setPublicKey(keypair.publicKey.toString());
@@ -189,6 +196,21 @@ const handleCopy = () => {
         console.error('Failed to copy: ', err);
       });
   };
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await sendTransaction(recipientAddress, amount, myKeyPair, connection);
+  };
+
+  // Handle changes for each input
+  const handleAddressChange = (event) => {
+    setRecipientAddress(event.target.value);
+  };
+
+  const handleAmountChange = (event) => {
+    setAmount(event.target.value);
+  };
+
 
   return (
     <>
@@ -320,38 +342,48 @@ const handleCopy = () => {
                     </h4>
 
                     {/* Send Transaction Form */}
-                    <form className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Recipient Address
-                        </label>
-                        <input
-                          type="text"
-                          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
-                          placeholder="Enter recipient's public key"
-                        />
-                      </div>
+                    <form className="space-y-6" onSubmit={handleSubmit}>
+  <div>
+    <label className="block text-sm font-medium text-gray-700">
+      Recipient Address
+    </label>
+    <input
+      name="recipientAddress" // Add a name attribute for form data
+      value={recipientAddress}
+      onChange={handleAddressChange}
+      type="text"
+      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
+      placeholder="Enter recipient's public key"
+      required
+    />
+  </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Amount (SOL)
-                        </label>
-                        <input
-                          type="number"
-                          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
-                          placeholder="Enter amount"
-                        />
-                      </div>
+  <div>
+    <label className="block text-sm font-medium text-gray-700">
+      Amount (SOL)
+    </label>
+    <input
+      name="amount" // Add a name attribute for form data
+      value={amount}
+      onChange={handleAmountChange}
+      type="number"
+      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
+      placeholder="Enter amount"
+      min={0}
+      step="any" // Allow decimal values
+      required
+    />
+  </div>
 
-                      <div className="flex justify-between items-center">
-                        <button
-                          type="submit"
-                          className="w-full bg-[#0c7b93] text-white font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#27496d] transform hover:scale-105"
-                        >
-                          Send
-                        </button>
-                      </div>
-                    </form>
+  <div className="flex justify-between items-center">
+    <button
+      type="submit"
+      className="w-full bg-[#0c7b93] text-white font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#27496d] transform hover:scale-105"
+    >
+      Send
+    </button>
+  </div>
+</form>
                   </div>
                 </Modal>
               )}

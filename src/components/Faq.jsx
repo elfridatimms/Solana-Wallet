@@ -9,7 +9,7 @@ const Faq = () => {
     <div className="p-8 bg-[#4e4f51] min-h-screen">
       {/* FAQ 1 */}
       <div className="mb-6 p-6 bg-[#313133] rounded-lg shadow-lg transition-transform transform hover:scale-105">
-        <h2 className="text-2xl font-semibold text-[#e0e0e0] hover:text-[#f0c14b] transition-colors duration-200">
+        <h2 className="text-2xl font-semibold text-[#e0e0e0] hover:text-[#00d0c6] transition-colors duration-200">
           What is this application about?
         </h2>
         <p className="mt-2 text-[#b0b0b0]">

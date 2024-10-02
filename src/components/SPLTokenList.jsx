@@ -6,6 +6,7 @@ import { fetchTokens } from '../utils/fetchTokens';
 import { useConnection } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import CreateTokenModal from './CreateTokenModal'; // Import the modal
+import solLogo from '../assets/sol_logo.png'
 
 const SPLTokenList = ({ publicKey }) => {
   const [tokens, setTokens] = useState([]);
@@ -59,19 +60,23 @@ const SPLTokenList = ({ publicKey }) => {
   };
 
   return (
-    <div className=" bg-[#313133]  rounded-lg shadow-lg">
+    <div className=" bg-[#313133]  rounded-lg">
       <h3 className="text-2xl font-bold text-white mb-4">SPL Tokens</h3>
 
       <ul className="space-y-4">
         {solBalance !== null && (
           <li className="bg-[#3d3d3f]  p-4 rounded-lg flex justify-between items-center">
-            <div>
-              <div className="text-white font-semibold">Solana (SOL)</div>
-              <div className="text-gray-400">Amount: {solBalance.toFixed(2)}</div>
+            <div className="flex items-center">
+              <img src={solLogo} alt={`sol logo`} className="h-8 w-8 mr-2" />
+              <div>
+                <div className="text-white font-semibold">Solana (SOL)</div>
+                <div className="text-gray-400">Amount: {solBalance.toFixed(2)}</div>
+              </div>
+              
             </div>
             <div className="text-gray-400">
-              Value: ${solPrice !== null ? (solBalance * solPrice).toFixed(2) : 'Fetching price...'}
-            </div>
+                Value: ${solPrice !== null ? (solBalance * solPrice).toFixed(2) : 'Fetching price...'}
+              </div>
           </li>
         )}
 
