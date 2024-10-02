@@ -10,7 +10,6 @@ import { MoonPayProvider } from '@moonpay/moonpay-react';
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
-import SendTransaction from './components/SendTransaction.jsx';
 import VerifySeed from './components/VerifySeed.jsx';
 import PasswordSetup from './components/PasswordSetup.jsx';
 import SeedContextProvider from './components/SeedContextProvider.jsx';
@@ -68,11 +67,9 @@ const App = () => {
                   <Route path="/verify-seed" element={<VerifySeed />} />
                   <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
                   <Route path="/dashboard" element={<WalletDashboard />} />
-
-                  <Route path="/send-transaction" element={<SendTransaction />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/support" element={<Support />} />
-            <Route path="/terms" element={<Terms />} />
+                  <Route path="/faq" element={<Faq />} />
+                  <Route path="/support" element={<Support />} />
+                  <Route path="/terms" element={<Terms />} />
 
                 </Routes>
               </SeedContextProvider>

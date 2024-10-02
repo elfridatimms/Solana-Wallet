@@ -214,7 +214,7 @@ const handleCopy = () => {
 
   return (
     <>
-    <Header />
+    <Header settings />
       <div className="min-h-screen bg-[#4e4f51] text-white flex flex-col p-6 space-y-8">
       
       <div className="flex flex-row space-x-6">
