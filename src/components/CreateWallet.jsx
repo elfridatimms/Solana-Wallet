@@ -75,7 +75,14 @@ const CreateWallet = () => {
         link.click(); // Programmatically click the link to trigger the download
         document.body.removeChild(link); // Remove the link after download
     };
+    const [currentStep, setCurrentStep] = useState(1); // Step tracker
+    const totalSteps = 3; // For example: 1. Enter Seed, 2. Verify, 3. Finish
 
+    const handleNextStep = () => {
+        if (currentStep < totalSteps) {
+            setCurrentStep(currentStep + 1);
+        }
+    };
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col items-center justify-center p-6">
 

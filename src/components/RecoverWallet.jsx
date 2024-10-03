@@ -137,7 +137,27 @@ const RecoverWallet = () => {
 
         reader.readAsText(file); // Read the file as text
     };
+    // Handle keypress for Enter
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            handleRecover(); // Trigger recover wallet on Enter
+        }
+    };
 
+    // Add event listener for keypress
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            if (e.key === 'Enter') {
+                handleRecover(); // Trigger the Continue button on Enter key
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress); // Clean up event listener
+        };
+    }, [seedPhrase]);
 
     const handleRecover = async () => {
         const mnemonic = seedPhrase.join(' ').trim();
@@ -193,6 +213,7 @@ const RecoverWallet = () => {
                                 placeholder={index + 1}
                                 value={word || ''}
                                 onChange={(e) => handleInputChange(index, e.target.value)}
+                                onKeyDown={handleKeyPress}
                             />
                         ))}
                     </div>
