@@ -215,7 +215,7 @@ const handleCopy = () => {
   return (
     <>
     <Header settings />
-      <div className="min-h-screen bg-[#4e4f51] text-white flex flex-col p-6 space-y-8">
+      <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col p-6 space-y-8">
       
       <div className="flex flex-row space-x-6">
         {/* Aside Section */}
@@ -308,7 +308,7 @@ const handleCopy = () => {
   
                     {/* SPL Token List */}
                     <div className="bg-[#313133]  p-6 rounded-lg shadow-lg text-left w-full max-w-3xl">
-                      <SPLTokenList publicKey={publicKey} />
+                      <SPLTokenList keypair={myKeyPair} />
                     </div>
                   </div>
   
@@ -330,21 +330,21 @@ const handleCopy = () => {
                   className="fixed inset-0 flex items-center justify-center p-4"
                   overlayClassName="fixed inset-0 bg-black bg-opacity-50"
                 >
-                  <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full relative">
+                  <div className="bg-[#2c2d30]  p-8 rounded-lg shadow-xl max-w-md w-full relative">
                     <button
-                      className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                      className="absolute top-3 right-3 text-gray-100 hover:text-gray-700 text-2xl font-bold"
                       onClick={handleModalClose}
                     >
                       ×
                     </button>
-                    <h4 className="text-xl font-semibold mb-6 text-center text-[#0c7b93]">
+                    <h4 className="text-xl font-semibold mb-6 text-center text-[#8ecae6]">
                       Send SOL
                     </h4>
 
                     {/* Send Transaction Form */}
                     <form className="space-y-6" onSubmit={handleSubmit}>
   <div>
-    <label className="block text-sm font-medium text-gray-700">
+    <label className="block text-sm font-medium text-gray-50">
       Recipient Address
     </label>
     <input
@@ -359,7 +359,7 @@ const handleCopy = () => {
   </div>
 
   <div>
-    <label className="block text-sm font-medium text-gray-700">
+    <label className="block text-sm font-medium text-gray-50">
       Amount (SOL)
     </label>
     <input
@@ -367,7 +367,7 @@ const handleCopy = () => {
       value={amount}
       onChange={handleAmountChange}
       type="number"
-      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
+      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#219ebc] focus:border-[#219ebc]"
       placeholder="Enter amount"
       min={0}
       step="any" // Allow decimal values
@@ -378,7 +378,7 @@ const handleCopy = () => {
   <div className="flex justify-between items-center">
     <button
       type="submit"
-      className="w-full bg-[#0c7b93] text-white font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#27496d] transform hover:scale-105"
+      className="w-full bg-[#8ecae6] text-black font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#219ebc] transform hover:scale-105"
     >
       Send
     </button>
@@ -405,7 +405,7 @@ const handleCopy = () => {
                     >
                       ×
                     </button>
-                    <h4 className="text-xl font-semibold mb-4 text-center text-[#0c7b93]">
+                    <h4 className="text-xl font-semibold mb-4 text-center text-[#8ecae6]">
                       Receive SOL
                     </h4>
                     <QRCode value={publicKey} size={256} />

@@ -1,19 +1,24 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey, Keypair } from '@solana/web3.js';
 import { fetchTokens } from '../utils/fetchTokens'; 
 import { useConnection } from '@solana/wallet-adapter-react';
 import axios from 'axios';
 import CreateTokenModal from './CreateTokenModal'; // Import the modal
 import solLogo from '../assets/sol_logo.png'
 
-const SPLTokenList = ({ publicKey }) => {
+
+const SPLTokenList = ({ keypair }) => {
   const [tokens, setTokens] = useState([]);
   const [solBalance, setSolBalance] = useState(null);
   const [solPrice, setSolPrice] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Manage modal visibility
   const { connection } = useConnection();
+  
+  console.log(tokens)
+  const publicKey = keypair.publicKey.toString()
+
 
   useEffect(() => {
     const fetchTokenData = async () => {
@@ -30,10 +35,10 @@ const SPLTokenList = ({ publicKey }) => {
       }
     };
 
-    if (publicKey) {
+    if (keypair) {
       fetchTokenData();
     }
-  }, [publicKey, connection]);
+  }, [keypair, connection]);
 
   useEffect(() => {
     const fetchSolPrice = async () => {
@@ -105,19 +110,22 @@ const SPLTokenList = ({ publicKey }) => {
       </ul>
 
       <button
-        className="mt-4 bg-[#00d0c6] text-[#303031] font-bold py-2 px-4 rounded-md hover:bg-[#57c7c1] transition duration-200"
+        className="mt-4 bg-[#8ecae6] text-black font-bold py-2 px-4 rounded-md hover:bg-[#219ebc] transition duration-200"
         onClick={handleAddAssetClick} // Open modal on click
       >
         + Add new asset
       </button>
 
-      <CreateTokenModal isOpen={isModalOpen} onClose={handleCloseModal} /> {/* Include the modal */}
+      <CreateTokenModal isOpen={isModalOpen} onClose={handleCloseModal} setAddedTokens={setTokens}
+      connection={connection} keypair={keypair}
+      /> {/* Include the modal */}
     </div>
   );
 };
 
 SPLTokenList.propTypes = {
-  publicKey: PropTypes.string.isRequired,
+  keypair: PropTypes.instanceOf(Keypair).isRequired, // Ensure userKeypair is an instance of Keypair
+
 };
 
 export default SPLTokenList;
