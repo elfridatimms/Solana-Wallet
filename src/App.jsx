@@ -17,6 +17,7 @@ import Login from './components/Login.jsx';
 import Faq from './components/Faq.jsx';
 import Support from './components/Support.jsx';
 import Terms from './components/Terms.jsx';
+import Settings from './components/Settings.jsx';
 
 
 const Home = () => {
@@ -70,6 +71,8 @@ const App = () => {
                   <Route path="/faq" element={<Faq />} />
                   <Route path="/support" element={<Support />} />
                   <Route path="/terms" element={<Terms />} />
+                  <Route path="/settings" element={<Settings />} />
+
 
                 </Routes>
               </SeedContextProvider>

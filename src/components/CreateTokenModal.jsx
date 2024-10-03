@@ -73,7 +73,7 @@ const CreateTokenModal = ({ isOpen, onClose, setAddedTokens,keypair ,connection 
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-700 hover:text-gray-900 text-xl transition-colors duration-200"
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold"
           aria-label="Close modal"
         >
           &#10005;

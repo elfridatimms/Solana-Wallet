@@ -16,6 +16,8 @@ import { useSeed } from './SeedContextProvider.jsx';
 import { Link } from 'react-router-dom';
 import Header from './Header.jsx';
 import { FaQuestionCircle, FaHeadset, FaFileAlt, FaCopy } from 'react-icons/fa'; // Import icons
+import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -38,7 +40,9 @@ const WalletDashboard = () => {
   const password = location.state?.password;
   const username = location.state?.username;
 
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
+ 
   const { connection } = useConnection();
   useEffect(() => {
     const retrieveAndDecryptSeed = async () => {
@@ -211,10 +215,15 @@ const handleCopy = () => {
     setAmount(event.target.value);
   };
 
+  const handleSettingsClick = () => {
+    navigate('/settings'); // Navigate to the settings page
+  };
+
+
 
   return (
     <>
-    <Header settings />
+    <Header settings onSettingsClick={handleSettingsClick}/>
       <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col p-6 space-y-8">
       
       <div className="flex flex-row space-x-6">
@@ -405,7 +414,7 @@ const handleCopy = () => {
                     >
                       ×
                     </button>
-                    <h4 className="text-xl font-semibold mb-4 text-center text-[#8ecae6]">
+                    <h4 className="text-xl font-semibold mb-4 text-center text-[#567b8c]">
                       Receive SOL
                     </h4>
                     <QRCode value={publicKey} size={256} />

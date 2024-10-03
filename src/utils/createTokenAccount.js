@@ -5,6 +5,8 @@ export const createTokenAccount = async (mintAddress, userKeypair, connection, a
   const mintPublicKey = new PublicKey(mintAddress);
   const userPublicKey = userKeypair.publicKey;
 
+  
+
   try {
     // Attempt to get or create the associated token account
     const associatedTokenAccount = await getOrCreateAssociatedTokenAccount(
@@ -31,6 +33,7 @@ export const createTokenAccount = async (mintAddress, userKeypair, connection, a
         owner: userPublicKey, // Your wallet address
       })
     );
+
 
     // Sign and send the transaction
     const signature = await connection.sendTransaction(transaction, [userKeypair]);
