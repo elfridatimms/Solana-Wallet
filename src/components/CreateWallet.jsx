@@ -4,6 +4,7 @@ import { Keypair, Connection, clusterApiUrl } from '@solana/web3.js'; // Import 
 import { derivePath } from 'ed25519-hd-key'; // Import to derive the correct Solana key
 import { useNavigate } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider';
+import { FaTimes, FaCopy, FaDownload } from 'react-icons/fa'; // Icons for Copy, Download, and X button
 
 const CreateWallet = () => {
     const [seedPhrase, setSeedPhrase] = useSeed();
@@ -76,22 +77,30 @@ const CreateWallet = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6">
-            <div className="max-w-sm w-full bg-white rounded-lg shadow-lg p-4" style={{ height: 'auto' }}>
-                <h1 className="text-lg font-bold mb-1 text-center">You will need it for later</h1>
-                <h2 className="text-xl font-bold mb-2 text-center">Write down your Recovery Phrase</h2>
-                <p className="mb-4 text-gray-600 text-center">You will need it on the next step</p>
+        <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col items-center justify-center p-6">
+
+
+            <div className="relative max-w-md w-full bg-[#2c2d30] rounded-lg shadow-lg p-6">
+                {/* X button inside the smaller window */}
+                <button
+                    className="absolute top-2 left-2 text-white text-lg"  // Adjusted to top-left corner
+                    onClick={() => navigate('/')}
+                >
+                    <FaTimes />
+                </button>
+
+                <h1 className="text-lg font-bold mb-2 text-center tracking-0.5">Your Recovery Phrase</h1>
+                <p className="mb-4 text-gray-400 text-center">Make sure to save your recovery phrase. You will need it to access your wallet.</p>
 
                 {/* Display the seed phrase */}
-                <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-3 gap-4 mb-6">
                     {seedPhrase.length > 0 ? (
                         seedPhrase.map((word, index) => (
                             <input
                                 key={index}
                                 type="text"
-                                className="p-2 border border-gray-400 rounded-md text-center focus:outline-none focus:ring-2 focus:ring-[#8ecae6] text-[#112240]"
-                                placeholder={index + 1}
-                                value={word}
+                                className="p-2 border border-gray-600 rounded-md text-center bg-gray-800 focus:outline-none focus:ring-2 focus:ring-[#8ecae6] text-white"
+                                value={word || ''}
                                 readOnly  // Disable editing as this is for display only
                             />
                         ))
@@ -100,11 +109,12 @@ const CreateWallet = () => {
                     )}
                 </div>
 
+
                 {/* Display public key if available */}
                 {publicKey && (
                     <div className="text-center mb-4">
-                        <p>Your Public Key:</p>
-                        <p className="text-[#8ecae6]">{publicKey}</p>
+                        <p className="text-gray-400">Your Public Key:</p>
+                        <p className="text-[#8ecae6] font-mono">{publicKey}</p>
                     </div>
                 )}
 
@@ -119,40 +129,39 @@ const CreateWallet = () => {
                 {/* Display copy success message */}
                 {copySuccess && <p className="text-green-500 mb-4 text-center">{copySuccess}</p>}
 
-                {/* Buttons stacked vertically */}
-                <div className="flex flex-col space-y-4 items-center">
+                {/* Circular Buttons for Copy and Download */}
+                <div className="flex space-x-4 justify-center mb-4">
                     <button
-                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
+                        className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d]"
                         onClick={copyToClipboard}
                     >
-                        COPY SEED PHRASE
+                        <FaCopy className="text-lg" />
                     </button>
 
                     <button
-                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
+                        className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d]"
                         onClick={downloadSeedPhrase}
                     >
-                        DOWNLOAD SEED PHRASE
+                        <FaDownload className="text-lg" />
                     </button>
-
-                    <button
-                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
-                        onClick={() => navigate('/verify-seed')}  // Correct route as a string
-                    >
-                        I SAVED MY RECOVERY PHRASE
-                    </button>
-
-                    {/* Back button */}
-                    <button
-                        className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-1 px-4 rounded-md transition w-1/3"
-                        onClick={() => navigate('/')}
-                    >
-                        BACK
-                    </button>
-
                 </div>
-            </div>
-        </div>
+
+                {/* Big Button for "I Saved My Recovery Phrase" */}
+                {/* Big Button for "I Saved My Recovery Phrase" */}
+                {/* Big Button for "I Saved My Recovery Phrase" */}
+                <button
+                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-full text-md transition w-full font-sans"
+                    onClick={() => navigate('/verify-seed')} >
+
+                    I SAVED MY RECOVERY PHRASE
+                </button>
+
+
+
+
+
+            </div >
+        </div >
     );
 };
 

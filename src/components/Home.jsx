@@ -1,87 +1,60 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import backgroundImage from '../images/hd.png'; // Ensure logo path is correct
+import Header from './Header'; // Assuming you already have the Header component
 
-const Home = () => {
+const LandingPage = () => {
     const navigate = useNavigate();
-    const createWalletRef = useRef(null);
-
-    // State to control the fading effect
-    const [showFirstSection, setShowFirstSection] = useState(true); // Track visibility of the first section
-    const [fadeOut, setFadeOut] = useState(false); // Trigger fade-out
-
-    useEffect(() => {
-        // Trigger fade out after 3 seconds
-        const fadeTimeout = setTimeout(() => {
-            setFadeOut(true); // Start fading out the first section
-        }, 3000); // Time before fading out starts
-
-        // Remove the first section after fade-out is complete
-        const removeTimeout = setTimeout(() => {
-            setShowFirstSection(false); // Hide the first section completely
-        }, 5000); // 2 seconds after fade-out starts
-
-        return () => {
-            clearTimeout(fadeTimeout);
-            clearTimeout(removeTimeout);
-        };
-    }, []);
 
     return (
-        <div className="min-h-screen text-white">
-            {/* Full-Screen Background Section with fade-out effect */}
-            {showFirstSection && (
-                <div
-                    className={`h-screen w-full flex flex-col items-center justify-center transition-opacity duration-1000 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
-                    style={{
-                        backgroundImage: `url(${backgroundImage})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                        backgroundRepeat: 'no-repeat',
-                    }}
-                >
-                    {/* Content in the first section */}
-                </div>
-            )}
+        <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col items-center justify-center p-6">
+            {/* Header */}
+            <Header />
 
-            {/* Main Content Section with buttons */}
-            {!showFirstSection && (
-                <div
-                    ref={createWalletRef}
-                    className="min-h-screen flex flex-col items-center justify-center transition-opacity duration-1000 opacity-100"
-                    style={{
-                        backgroundColor: "#2b2c2e", // Set background color for the content section
-                    }}
-                >
-                    {/* Logo and Header Section */}
-                    <div className="flex flex-col items-center justify-center">
-                        <h1 className="text-5xl font-bold mb-4 text-center animate-fade-in">
-                            Already have a wallet?
-                        </h1>
-                        <button
-                            className="bg-gradient-to-r from-blue-500 to-green-400 hover:from-blue-600 hover:to-green-500 text-white font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105"
-                            onClick={() => navigate('/login')}
-                        >
-                            ACCESS YOUR WALLET
-                        </button>
+            {/* Hero Section */}
+            <section className="flex flex-col items-center justify-center text-center py-20">
+                <h1 className="text-6xl font-bold mb-6">Effortless Crypto with Solara</h1>
+                <p className="text-lg text-gray-300 mb-10 max-w-xl mx-auto">
+                    A simple and secure Solana wallet to manage your digital assets with ease. Join us today!
+                </p>
+                <div className="flex space-x-4">
+                    <button
+                        className="bg-[#8ecae6] text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition"
+                        onClick={() => navigate('/create-wallet')}
+                    >
+                        Create New Wallet
+                    </button>
+                    <button
+                        className="bg-[#8ecae6] text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition"
+                        onClick={() => navigate('/login')}
+                    >
+                        Access Your Wallet
+                    </button>
+                </div>
+            </section>
+
+            {/* Features Section */}
+            <section className="py-12 bg-[#3d3f43] px-6">
+                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Feature 1 */}
+                    <div className="bg-[#2c2d30] p-6 rounded-lg shadow-md">
+                        <h2 className="text-3xl font-bold mb-4">Manage Your Tokens</h2>
+                        <p className="text-gray-300">
+                            Easily view and manage your Solana-based tokens in a simple, intuitive interface.
+                        </p>
                     </div>
 
-                    {/* Create New Wallet Section */}
-                    <div className="flex flex-col items-center justify-center mt-20">
-                        <h1 className="text-5xl font-bold mb-4 text-center animate-fade-in">
-                            New here?
-                        </h1>
-                        <button
-                            className="bg-gradient-to-r from-blue-500 to-green-400 hover:from-blue-600 hover:to-green-500 text-white font-bold py-4 px-8 rounded-full text-lg transition transform hover:scale-105"
-                            onClick={() => navigate('/create-wallet')}
-                        >
-                            CREATE A NEW WALLET
-                        </button>
+                    {/* Feature 2 */}
+                    <div className="bg-[#2c2d30] p-6 rounded-lg shadow-md">
+                        <h2 className="text-3xl font-bold mb-4">Secure and Private</h2>
+                        <p className="text-gray-300">
+                            Your security is our top priority. We ensure your private keys are never exposed.
+                        </p>
                     </div>
                 </div>
-            )}
+            </section>
+
         </div>
     );
 };
 
-export default Home;
+export default LandingPage;

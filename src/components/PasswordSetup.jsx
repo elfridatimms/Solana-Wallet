@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider';
 import { encryptSeed } from './RecoverWallet';
+import { FaTimes } from 'react-icons/fa'; // Import the close (X) icon
 
 const PasswordSetup = () => {
     const [username, setUsername] = useState("");
@@ -34,16 +35,26 @@ const PasswordSetup = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#112240] text-white flex flex-col items-center justify-center p-6">
-            <div className="max-w-sm w-full bg-white rounded-lg shadow-lg p-6">
-                <h1 className="text-2xl font-bold mb-4 text-center">
+        <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col items-center justify-center p-6">
+
+            <div className="relative max-w-sm w-full bg-[#2c2d30] rounded-lg shadow-lg p-6">
+
+                {/* X button for closing the form */}
+                <button
+                    className="absolute top-2 left-2 text-white text-lg"
+                    onClick={() => navigate('/')}
+                >
+                    <FaTimes />
+                </button>
+
+                <h1 className="text-2xl font-bold mb-4 text-center tracking-0.5">
                     Set Up Your Wallet Password
                 </h1>
 
                 <input
                     type="username"
                     placeholder="Enter username"
-                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"
+                    className="p-2 border border-gray-600 rounded-md w-full mb-4 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#8ecae6]"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                 />
@@ -51,7 +62,7 @@ const PasswordSetup = () => {
                 <input
                     type="password"
                     placeholder="Enter password"
-                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"
+                    className="p-2 border border-gray-600 rounded-md w-full mb-4 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#8ecae6]"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
@@ -59,15 +70,16 @@ const PasswordSetup = () => {
                 <input
                     type="password"
                     placeholder="Confirm password"
-                    className="p-2 border border-gray-400 rounded-md w-full mb-4 text-black"
+                    className="p-2 border border-gray-600 rounded-md w-full mb-4 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#8ecae6]"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
 
                 {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
+                {/* Submit Button */}
                 <button
-                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-6 rounded-md transition w-full"
+                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-full text-md transition w-full font-sans"
                     onClick={handleSubmit}
                 >
                     SET PASSWORD
