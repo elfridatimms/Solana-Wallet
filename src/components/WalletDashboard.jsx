@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js';
-import SendTransaction from './SendTransaction';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
+import { sendTransaction } from '../utils/sendTransaction';
 import QRCode from 'react-qr-code';
 import Modal from 'react-modal';
 import { decryptData } from '../utils/cryptoUtils';
@@ -16,6 +16,8 @@ import { useSeed } from './SeedContextProvider.jsx';
 import { Link } from 'react-router-dom';
 import Header from './Header.jsx';
 import { FaQuestionCircle, FaHeadset, FaFileAlt, FaCopy } from 'react-icons/fa'; // Import icons
+import { useNavigate } from 'react-router-dom';
+
 
 
 
@@ -30,10 +32,17 @@ const WalletDashboard = () => {
   const [modalType, setModalType] = useState('');
   const [error, setError] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [recipientAddress, setRecipientAddress] = useState('');
+  const [amount, setAmount] = useState('');
+  const [myKeyPair, setMyKeypair] = useState('');
+
   const location = useLocation();
   const password = location.state?.password;
   const username = location.state?.username;
 
+  const navigate = useNavigate(); // Hook for programmatic navigation
+
+ 
   const { connection } = useConnection();
   useEffect(() => {
     const retrieveAndDecryptSeed = async () => {
@@ -94,6 +103,8 @@ const WalletDashboard = () => {
         // Create Solana keypair from derived seed
         const keypair = Keypair.fromSeed(derived.key.subarray(0, 32));
         console.log('Keypair Public Key:', keypair.publicKey.toString());
+
+        setMyKeypair(keypair);
 
         // Set the public key state
         setPublicKey(keypair.publicKey.toString());
@@ -189,11 +200,31 @@ const handleCopy = () => {
         console.error('Failed to copy: ', err);
       });
   };
+  
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await sendTransaction(recipientAddress, amount, myKeyPair, connection);
+  };
+
+  // Handle changes for each input
+  const handleAddressChange = (event) => {
+    setRecipientAddress(event.target.value);
+  };
+
+  const handleAmountChange = (event) => {
+    setAmount(event.target.value);
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/settings'); // Navigate to the settings page
+  };
+
+
 
   return (
     <>
-    <Header />
-      <div className="min-h-screen bg-[#4e4f51] text-white flex flex-col p-6 space-y-8">
+    <Header settings onSettingsClick={handleSettingsClick}/>
+      <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col p-6 space-y-8">
       
       <div className="flex flex-row space-x-6">
         {/* Aside Section */}
@@ -286,7 +317,7 @@ const handleCopy = () => {
   
                     {/* SPL Token List */}
                     <div className="bg-[#313133]  p-6 rounded-lg shadow-lg text-left w-full max-w-3xl">
-                      <SPLTokenList publicKey={publicKey} />
+                      <SPLTokenList keypair={myKeyPair} />
                     </div>
                   </div>
   
@@ -308,50 +339,60 @@ const handleCopy = () => {
                   className="fixed inset-0 flex items-center justify-center p-4"
                   overlayClassName="fixed inset-0 bg-black bg-opacity-50"
                 >
-                  <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full relative">
+                  <div className="bg-[#2c2d30]  p-8 rounded-lg shadow-xl max-w-md w-full relative">
                     <button
-                      className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold"
+                      className="absolute top-3 right-3 text-gray-100 hover:text-gray-700 text-2xl font-bold"
                       onClick={handleModalClose}
                     >
                       ×
                     </button>
-                    <h4 className="text-xl font-semibold mb-6 text-center text-[#0c7b93]">
+                    <h4 className="text-xl font-semibold mb-6 text-center text-[#8ecae6]">
                       Send SOL
                     </h4>
 
                     {/* Send Transaction Form */}
-                    <form className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Recipient Address
-                        </label>
-                        <input
-                          type="text"
-                          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
-                          placeholder="Enter recipient's public key"
-                        />
-                      </div>
+                    <form className="space-y-6" onSubmit={handleSubmit}>
+  <div>
+    <label className="block text-sm font-medium text-gray-50">
+      Recipient Address
+    </label>
+    <input
+      name="recipientAddress" // Add a name attribute for form data
+      value={recipientAddress}
+      onChange={handleAddressChange}
+      type="text"
+      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
+      placeholder="Enter recipient's public key"
+      required
+    />
+  </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700">
-                          Amount (SOL)
-                        </label>
-                        <input
-                          type="number"
-                          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
-                          placeholder="Enter amount"
-                        />
-                      </div>
+  <div>
+    <label className="block text-sm font-medium text-gray-50">
+      Amount (SOL)
+    </label>
+    <input
+      name="amount" // Add a name attribute for form data
+      value={amount}
+      onChange={handleAmountChange}
+      type="number"
+      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#219ebc] focus:border-[#219ebc]"
+      placeholder="Enter amount"
+      min={0}
+      step="any" // Allow decimal values
+      required
+    />
+  </div>
 
-                      <div className="flex justify-between items-center">
-                        <button
-                          type="submit"
-                          className="w-full bg-[#0c7b93] text-white font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#27496d] transform hover:scale-105"
-                        >
-                          Send
-                        </button>
-                      </div>
-                    </form>
+  <div className="flex justify-between items-center">
+    <button
+      type="submit"
+      className="w-full bg-[#8ecae6] text-black font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#219ebc] transform hover:scale-105"
+    >
+      Send
+    </button>
+  </div>
+</form>
                   </div>
                 </Modal>
               )}
@@ -373,7 +414,7 @@ const handleCopy = () => {
                     >
                       ×
                     </button>
-                    <h4 className="text-xl font-semibold mb-4 text-center text-[#0c7b93]">
+                    <h4 className="text-xl font-semibold mb-4 text-center text-[#567b8c]">
                       Receive SOL
                     </h4>
                     <QRCode value={publicKey} size={256} />

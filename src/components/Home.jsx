@@ -1,14 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header'; // Assuming you already have the Header component
+import logo from '../assets/cropped.png'; // Adjust the path based on where you saved the image
 
-const LandingPage = () => {
+const Home = () => {
     const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col items-center justify-center p-6">
             {/* Header */}
-            <Header />
+            <img src={logo} alt="Solara Logo" className="mb-6 w-40 h-40 object-contain" />
 
             {/* Hero Section */}
             <section className="flex flex-col items-center justify-center text-center py-20">
@@ -57,4 +58,4 @@ const LandingPage = () => {
     );
 };
 
-export default LandingPage;
+export default Home;

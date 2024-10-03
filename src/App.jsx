@@ -6,12 +6,10 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adap
 import { clusterApiUrl } from '@solana/web3.js';
 import { MoonPayProvider } from '@moonpay/moonpay-react';
 
-import Home from './components/Home'; // Import the separated Home component
 
 import CreateWallet from './components/CreateWallet.jsx';
 import RecoverWallet from './components/RecoverWallet.jsx';
 import WalletDashboard from './components/WalletDashboard.jsx';
-import SendTransaction from './components/SendTransaction.jsx';
 import VerifySeed from './components/VerifySeed.jsx';
 import PasswordSetup from './components/PasswordSetup.jsx';
 import SeedContextProvider from './components/SeedContextProvider.jsx';
@@ -19,8 +17,9 @@ import Login from './components/Login.jsx';
 import Faq from './components/Faq.jsx';
 import Support from './components/Support.jsx';
 import Terms from './components/Terms.jsx';
+import Settings from './components/Settings.jsx';
 
-
+import Home from './components/Home.jsx';
 
 const App = () => {
   const network = clusterApiUrl('devnet'); // For testing
@@ -46,11 +45,11 @@ const App = () => {
                   <Route path="/verify-seed" element={<VerifySeed />} />
                   <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
                   <Route path="/dashboard" element={<WalletDashboard />} />
-
-                  <Route path="/send-transaction" element={<SendTransaction />} />
                   <Route path="/faq" element={<Faq />} />
                   <Route path="/support" element={<Support />} />
                   <Route path="/terms" element={<Terms />} />
+                  <Route path="/settings" element={<Settings />} />
+
 
                 </Routes>
               </SeedContextProvider>
