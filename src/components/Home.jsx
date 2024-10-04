@@ -72,32 +72,33 @@ const Home = () => {
                         </div>
                     </section>
 
-                    {/* Features Section - appears on scroll */}
+                    {/* Features Section */}
                     <section className="py-12 bg-[#3d3f43] px-6">
                         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* Feature 1 */}
-                            <div className="bg-[#2c2d30] p-6 rounded-lg shadow-md">
-                                <h2 className="text-3xl font-bold mb-4">Manage Your Tokens</h2>
+                            <div className="bg-[#2c2d30] p-6 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-lg">
+                                <h2 className="text-3xl font-bold mb-4 text-white hover:text-[#00d0c6] transition-colors duration-200">Manage Your Tokens</h2>
                                 <p className="text-gray-300">
                                     Easily view and manage your Solana-based tokens in a simple, intuitive interface.
                                 </p>
                             </div>
 
                             {/* Feature 2 */}
-                            <div className="bg-[#2c2d30] p-6 rounded-lg shadow-md">
-                                <h2 className="text-3xl font-bold mb-4">Secure and Private</h2>
+                            <div className="bg-[#2c2d30] p-6 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-lg">
+                                <h2 className="text-3xl font-bold mb-4 text-white hover:text-[#00d0c6] transition-colors duration-200">Secure and Private</h2>
                                 <p className="text-gray-300">
                                     Your security is our top priority. We ensure your private keys are never exposed.
                                 </p>
                             </div>
                         </div>
                     </section>
+
                 </div>
 
                 {/* Toggle FAQ Button */}
                 <div className="text-center my-10">
                     <button
-                        className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-full text-lg hover:scale-105 transition"
+                        className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-full text-lg hover:scale-105 transition mt-10 mb-1"
                         onClick={toggleFaq}
                     >
                         {showFaq ? 'Hide FAQ' : 'Need help?'}  {/* Toggle Button Text */}
@@ -106,11 +107,16 @@ const Home = () => {
 
                 {/* Conditionally Render FAQ Section */}
                 {showFaq && <Faq />} {/* Show the FAQ section if `showFaq` is true */}
-                <p className="text-white-400 mt-4 mb-4 text-center">Still have questions?</p>
-                <button className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-full text-lg hover:scale-105 transition ">
-                    Get in touch
-                </button>
+
+                {/* "Still have questions?" text and Get in touch button */}
+                <div className="text-center mt-6 mb-10">
+                    <p className="text-gray-400 mb-4">Still have questions?</p>
+                    <button className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-full text-lg hover:scale-105 transition mb-7">
+                        Get in touch
+                    </button>
+                </div>
             </div>
+
             {/* Footer */}
             <Footer />
         </>
