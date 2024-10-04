@@ -20,7 +20,7 @@ import Terms from './components/Terms.jsx';
 import Settings from './components/Settings.jsx';
 
 import Home from './components/Home.jsx';
-
+//keke
 const App = () => {
   const network = clusterApiUrl('devnet'); // For testing
 
