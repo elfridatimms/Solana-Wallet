@@ -1,24 +1,31 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import Header from './Header.jsx';
 import PropTypes from 'prop-types';
+import { CurrencyContext } from './CurrencyProvider'; // Assuming you use the CurrencyContext to handle the global currency state
 
-const Settings = ({ currency, setCurrency, network, setNetwork }) => {
+const Settings = ({ network, setNetwork }) => {
+  const { currency, setCurrency } = useContext(CurrencyContext); // Use context to access global currency state
   const networks = ['mainnet-beta', 'testnet', 'devnet'];
 
   const handleNetworkChange = (event) => {
-    console.log(event.target.value);
     setNetwork(event.target.value);
   };
 
   const handleCurrencyChange = (e) => {
-    setCurrency(e.target.value);
+    setCurrency(e.target.value); // Update the currency context
   };
+
+  // Save the settings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('selectedCurrency', currency);
+    localStorage.setItem('selectedNetwork', network);
+  }, [currency, network]);
 
   return (
     <>
       <Header settings />
 
-      <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex p-6 max-w-7xl mx-auto">
+      <div className="w-screen min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white">
         <div className="flex-grow bg-[#313133] p-6 rounded-lg shadow-lg text-left max-w-md mx-auto">
           <h3 className="text-2xl font-bold text-white mb-6">Settings</h3>
 
@@ -58,8 +65,6 @@ const Settings = ({ currency, setCurrency, network, setNetwork }) => {
 
           <button
             onClick={() => {
-              localStorage.setItem('selectedCurrency', currency);
-              localStorage.setItem('selectedNetwork', network);
               alert('Settings saved!');
             }}
             className="w-full bg-[#8ecae6] text-black font-bold hover:bg-[#219ebc] py-4 rounded-lg focus:outline-none focus:ring focus:ring-[#8ecae6] transition duration-300"
@@ -73,10 +78,8 @@ const Settings = ({ currency, setCurrency, network, setNetwork }) => {
 };
 
 Settings.propTypes = {
-  currency: PropTypes.string,
-  setCurrency: PropTypes.func,
-  network: PropTypes.string,
-  setNetwork: PropTypes.func,
+  network: PropTypes.string.isRequired,
+  setNetwork: PropTypes.func.isRequired,
 };
 
 export default Settings;

@@ -8,7 +8,7 @@ import { amount } from '@metaplex-foundation/js';
 
 
 
-const CreateTokenModal = ({ isOpen, onClose, setAddedTokens,keypair ,connection  }) => {
+const CreateTokenModal = ({ isOpen, onClose, setAddedTokens, keypair, connection }) => {
   const [tokens, setTokens] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,19 +18,17 @@ const CreateTokenModal = ({ isOpen, onClose, setAddedTokens,keypair ,connection 
 
 
   const handleAddToken = async (mint, name, logo) => {
-    const amount =0;
+    const amount = 0; // Set to zero as no transfer is occurring here, only token account creation
     try {
-      // Wait for createTokenAccount to complete
-      await createTokenAccount(mint, keypair, connection, amount);
-  
-      
+      // Create the token account for the user
+      const tokenAccount = await createTokenAccount(mint, keypair, connection, amount);
+
+      // If successful, update the added tokens list in the parent component
+      setAddedTokens(prevTokens => [...prevTokens, { name, logo, mint, address: tokenAccount }]);
     } catch (error) {
       console.error("Error adding token:", error);
     }
   };
-  
-
-  
 
   useEffect(() => {
     const fetchTokens = async () => {
@@ -40,11 +38,10 @@ const CreateTokenModal = ({ isOpen, onClose, setAddedTokens,keypair ,connection 
         const response = await axios.get(
           'https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/src/tokens/solana.tokenlist.json'
         );
-        console.log(response.data.tokens); // Log the response for debugging
         setTokens(response.data.tokens || []); // Set tokens to the retrieved tokens or an empty array
       } catch (err) {
         console.error('Error fetching tokens:', err);
-        setError('Error fetching tokens'); // Set error message
+        setError('Error fetching tokens');
       } finally {
         setLoading(false);
       }
@@ -55,7 +52,7 @@ const CreateTokenModal = ({ isOpen, onClose, setAddedTokens,keypair ,connection 
     }
   }, [isOpen]);
 
-  if (!isOpen) return null; // Don't render anything if the modal is closed
+  if (!isOpen) return null;
 
   const loadMoreTokens = () => {
     setVisibleTokens((prev) => prev + 10); // Load 10 more tokens each time
@@ -135,7 +132,7 @@ const CreateTokenModal = ({ isOpen, onClose, setAddedTokens,keypair ,connection 
               {token.extensions?.website && (
                 <div className="flex flex-col items-end">
                   <button className="mt-2 bg-[#8ecae6] hover:bg-[#219ebc]  text-black font-bold py-2 px-6 rounded-md transition duration-200"
-                  onClick={() => handleAddToken(token.address ,token.name, token.logoURI)}
+                    onClick={() => handleAddToken(token.address, token.name, token.logoURI)}
                   >
                     Add
                   </button>

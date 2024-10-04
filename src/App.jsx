@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'; // Wallet modal for wallet selection
@@ -21,6 +21,7 @@ import Terms from './components/Terms.jsx';
 import Settings from './components/Settings.jsx';
 
 import Home from './components/Home.jsx';
+import CurrencyProvider from './components/CurrencyProvider.jsx';
 //keke
 const App = () => {
   const savedNetwork = localStorage.getItem('selectedNetwork') || 'devnet';
@@ -28,7 +29,7 @@ const App = () => {
 
   const [network, setNetwork] = useState(savedNetwork); // Default network
   const [currency, setCurrency] = useState(savedCurrency); // Default currency
-  
+
 
   const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()]; // Wallets
 
@@ -42,23 +43,24 @@ const App = () => {
               debug
             >
               <SeedContextProvider>
+                <CurrencyProvider>
 
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/create-wallet" element={<CreateWallet />} />
-                  <Route path="/recover-wallet" element={<RecoverWallet />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/verify-seed" element={<VerifySeed />} />
-                  <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
-                  <Route path="/dashboard" element={<WalletDashboard currency={currency}/>} />
-                  <Route path="/faq" element={<Faq />} />
-                  <Route path="/support" element={<Support />} />
-                  <Route path="/terms" element={<Terms />} />
-                  <Route path="/settings" element={<Settings currency={currency} setCurrency={setCurrency}
-                                                            network={network} setNetwork={setNetwork}/>} />
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/create-wallet" element={<CreateWallet />} />
+                    <Route path="/recover-wallet" element={<RecoverWallet />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/verify-seed" element={<VerifySeed />} />
+                    <Route path="/password-setup" element={<PasswordSetup />} /> {/* Add this route */}
+                    <Route path="/dashboard" element={<WalletDashboard />} />
+                    <Route path="/faq" element={<Faq />} />
+                    <Route path="/support" element={<Support />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/settings" element={<Settings network={network} setNetwork={setNetwork} />} />
 
 
-                </Routes>
+                  </Routes>
+                </CurrencyProvider>
               </SeedContextProvider>
             </MoonPayProvider>
 
