@@ -4,7 +4,7 @@ import { Keypair, Connection } from '@solana/web3.js';
 import { useNavigate } from 'react-router-dom';
 import { encryptSeed } from '../utils/cryptoUtils';
 import { FaTimes, FaUpload, FaPaste } from 'react-icons/fa'; // Import X, Upload, and Paste icons
-
+//bkabla
 const VerifySeed = () => {
     const [seedInput, setSeedInput] = useState(new Array(12).fill('')); // 12 input fields for recovery phrase
     const [error, setError] = useState('');
