@@ -15,16 +15,16 @@ import { useLocation } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider.jsx';
 import { Link } from 'react-router-dom';
 import Header from './Header.jsx';
-import { FaQuestionCircle, FaHeadset, FaFileAlt, FaCopy } from 'react-icons/fa'; // Import icons
+import { FaHeadset, FaFileAlt, FaCopy } from 'react-icons/fa'; // Import icons
 import { useNavigate } from 'react-router-dom';
-
-
+import SendTransactionModal from './SendTransactionModal.jsx';
+import PropTypes from 'prop-types';
 
 
 
 Modal.setAppElement('#root');
 
-const WalletDashboard = () => {
+const WalletDashboard = ({ currency }) => {
   const [publicKey, setPublicKey] = useState(null);
   const [balance, setBalance] = useState(null);
   const [solPrice, setSolPrice] = useState(null);
@@ -32,9 +32,10 @@ const WalletDashboard = () => {
   const [modalType, setModalType] = useState('');
   const [error, setError] = useState(null);
   const [visible, setVisible] = useState(false);
-  const [recipientAddress, setRecipientAddress] = useState('');
-  const [amount, setAmount] = useState('');
   const [myKeyPair, setMyKeypair] = useState('');
+
+  const [selectedCurrency, setSelectedCurrency] = useState('usd'); // New state for selected currency
+
 
   const location = useLocation();
   const password = location.state?.password;
@@ -201,7 +202,7 @@ const handleCopy = () => {
       });
   };
   
-  const handleSubmit = async (event) => {
+ /*  const handleSubmit = async (event) => {
     event.preventDefault();
     await sendTransaction(recipientAddress, amount, myKeyPair, connection);
   };
@@ -213,12 +214,35 @@ const handleCopy = () => {
 
   const handleAmountChange = (event) => {
     setAmount(event.target.value);
-  };
+  }; */
 
   const handleSettingsClick = () => {
     navigate('/settings'); // Navigate to the settings page
   };
 
+
+   // Fetch the current SOL price in multiple currencies
+  useEffect(() => {
+    const fetchSolPrice = async () => {
+      try {
+       /*  const response = await axios.get(
+          'https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd,eur,gbp'
+        ); */
+        //setSolPrice(response.data.solana);
+      } catch (err) {
+        console.error('Error fetching SOL price:', err);
+      }
+    };
+
+    fetchSolPrice();
+    const interval = setInterval(fetchSolPrice, 60000); // Refresh price every minute
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
+  const handleCurrencyChange = (event) => {
+    setSelectedCurrency(event.target.value);
+  };
 
 
   return (
@@ -231,15 +255,6 @@ const handleCopy = () => {
         <aside className="w-1/4 bg-[#313133] p-6 rounded-lg shadow-lg text-left max-w-md">
           <h3 className="text-xl font-semibold mb-4 text-white">Useful Links</h3>
           <ul className="space-y-2">
-            <li>
-              <Link 
-                to="/faq" 
-                className="flex items-center p-3 rounded-lg transition duration-200 hover:bg-[#4b4c4f]"
-              >
-                <FaQuestionCircle className="mr-2" /> {/* Icon */}
-                <span className="text-lg">FAQ</span> {/* Enhanced Font Size */}
-              </Link>
-            </li>
             <li>
               <Link 
                 to="/support" 
@@ -332,70 +347,15 @@ const handleCopy = () => {
                   />
   
                      {/* Modal for Send Transaction */}
-              {modalType === 'send' && (
-                <Modal
-                  isOpen={modalIsOpen}
-                  onRequestClose={handleModalClose}
-                  className="fixed inset-0 flex items-center justify-center p-4"
-                  overlayClassName="fixed inset-0 bg-black bg-opacity-50"
-                >
-                  <div className="bg-[#2c2d30]  p-8 rounded-lg shadow-xl max-w-md w-full relative">
-                    <button
-                      className="absolute top-3 right-3 text-gray-100 hover:text-gray-700 text-2xl font-bold"
-                      onClick={handleModalClose}
-                    >
-                      ×
-                    </button>
-                    <h4 className="text-xl font-semibold mb-6 text-center text-[#8ecae6]">
-                      Send SOL
-                    </h4>
-
-                    {/* Send Transaction Form */}
-                    <form className="space-y-6" onSubmit={handleSubmit}>
-  <div>
-    <label className="block text-sm font-medium text-gray-50">
-      Recipient Address
-    </label>
-    <input
-      name="recipientAddress" // Add a name attribute for form data
-      value={recipientAddress}
-      onChange={handleAddressChange}
-      type="text"
-      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#0c7b93] focus:border-[#0c7b93]"
-      placeholder="Enter recipient's public key"
-      required
-    />
-  </div>
-
-  <div>
-    <label className="block text-sm font-medium text-gray-50">
-      Amount (SOL)
-    </label>
-    <input
-      name="amount" // Add a name attribute for form data
-      value={amount}
-      onChange={handleAmountChange}
-      type="number"
-      className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#219ebc] focus:border-[#219ebc]"
-      placeholder="Enter amount"
-      min={0}
-      step="any" // Allow decimal values
-      required
-    />
-  </div>
-
-  <div className="flex justify-between items-center">
-    <button
-      type="submit"
-      className="w-full bg-[#8ecae6] text-black font-bold py-2 px-4 rounded-lg transition-all hover:bg-[#219ebc] transform hover:scale-105"
-    >
-      Send
-    </button>
-  </div>
-</form>
-                  </div>
-                </Modal>
-              )}
+{modalType === 'send' && (
+  <SendTransactionModal 
+    isOpen={modalIsOpen} 
+    onRequestClose={handleModalClose} 
+    myKeyPair={myKeyPair} 
+    connection={connection} 
+    selectedTokenAddress={null}
+  />
+)}
 
 
   
@@ -437,5 +397,10 @@ const handleCopy = () => {
   );
   
 };
+
+SPLTokenList.propTypes = {
+  currency: PropTypes.object, // Ensure userKeypair is an instance of Keypair
+};
+
 
 export default WalletDashboard;

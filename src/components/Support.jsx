@@ -4,8 +4,8 @@ import Header from './Header';
 const Support = () => {
   return (
     <>
-      <Header />
-      <div className="p-8 bg-[#4e4f51] min-h-screen">
+      <Header settings/>
+      <div className="p-8 bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] min-h-screen">
         {/* Support 1 */}
         <div className="mb-6 p-6 bg-[#313133] rounded-lg shadow-lg transition-transform transform hover:scale-105">
           <h2 className="text-2xl font-semibold text-[#e0e0e0] hover:text-[#00d0c6] transition-colors duration-200">
