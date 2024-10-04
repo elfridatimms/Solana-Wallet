@@ -23,15 +23,18 @@ import Settings from './components/Settings.jsx';
 import Home from './components/Home.jsx';
 //keke
 const App = () => {
-  const network = clusterApiUrl('devnet'); // For testing
-  const [currency, setCurrency] = useState('USD'); // Default currency
+  const savedNetwork = localStorage.getItem('selectedNetwork') || 'devnet';
+  const savedCurrency = localStorage.getItem('selectedCurrency') || 'USD';
 
+  const [network, setNetwork] = useState(savedNetwork); // Default network
+  const [currency, setCurrency] = useState(savedCurrency); // Default currency
+  
 
   const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()]; // Wallets
 
   return (
     <Router>
-      <ConnectionProvider endpoint={network}>
+      <ConnectionProvider endpoint={clusterApiUrl(network)}>
         <WalletProvider wallets={wallets} autoConnect>
           <WalletModalProvider>
             <MoonPayProvider
@@ -51,7 +54,8 @@ const App = () => {
                   <Route path="/faq" element={<Faq />} />
                   <Route path="/support" element={<Support />} />
                   <Route path="/terms" element={<Terms />} />
-                  <Route path="/settings" element={<Settings currency={currency} setCurrency={setCurrency}/>} />
+                  <Route path="/settings" element={<Settings currency={currency} setCurrency={setCurrency}
+                                                            network={network} setNetwork={setNetwork}/>} />
 
 
                 </Routes>

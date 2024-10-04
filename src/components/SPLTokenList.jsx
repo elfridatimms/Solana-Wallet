@@ -8,7 +8,7 @@ import CreateTokenModal from './CreateTokenModal'; // Import the modal
 import solLogo from '../assets/sol_logo.png';
 import SendTransactionModal from './SendTransactionModal';
 
-const SPLTokenList = ({ keypair }) => {
+const SPLTokenList = ({ keypair, currency }) => {
   const [tokens, setTokens] = useState([]);
   const [solBalance, setSolBalance] = useState(null);
   const [solPrice, setSolPrice] = useState(null);
@@ -159,6 +159,7 @@ const SPLTokenList = ({ keypair }) => {
 
 SPLTokenList.propTypes = {
   keypair: PropTypes.instanceOf(Keypair).isRequired, // Ensure userKeypair is an instance of Keypair
+  currency: PropTypes.string
 };
 
 export default SPLTokenList;

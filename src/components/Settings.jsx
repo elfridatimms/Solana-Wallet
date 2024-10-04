@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Header from './Header.jsx';
 import PropTypes from 'prop-types';
 
-const Settings = ({currency, setCurrency}) => {
-  const [network, setNetwork] = useState('Devnet'); // Default network
+const Settings = ({ currency, setCurrency, network, setNetwork }) => {
+  const networks = ['mainnet-beta', 'testnet', 'devnet'];
 
-  const handleNetworkChange = (e) => {
-    setNetwork(e.target.value);
+  const handleNetworkChange = (event) => {
+    console.log(event.target.value);
+    setNetwork(event.target.value);
   };
 
   const handleCurrencyChange = (e) => {
@@ -16,28 +17,31 @@ const Settings = ({currency, setCurrency}) => {
   return (
     <>
       <Header settings />
-      <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex items-center justify-center p-6">
-        <div className="w-full max-w-3xl mx-2 border border-gray-700 shadow-2xl bg-[#2a2a2e] rounded-2xl p-8 -mt-16">
-          <h2 className="text-4xl font-bold text-white mb-10 text-center">Settings</h2>
+
+      <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex p-6 max-w-7xl mx-auto">
+        <div className="flex-grow bg-[#313133] p-6 rounded-lg shadow-lg text-left max-w-md mx-auto">
+          <h3 className="text-2xl font-bold text-white mb-6">Settings</h3>
 
           <div className="mb-8">
-            <label htmlFor="network" className="block text-lg font-semibold text-gray-300 mb-3">
+            <label htmlFor="network" className="block text-md font-semibold text-gray-300 mb-3">
               Select Network:
             </label>
             <select
-              id="network"
+              id="cluster"
               value={network}
               onChange={handleNetworkChange}
               className="mt-1 block w-full p-4 border border-gray-600 bg-[#1e1e21] text-white rounded-lg focus:ring focus:ring-blue-500 focus:border-blue-500 transition duration-300"
             >
-              <option value="Devnet">Devnet</option>
-              <option value="Testnet">Testnet</option>
-              <option value="Mainnet">Mainnet</option>
+              {networks.map((networkName) => (
+                <option key={networkName} value={networkName}>
+                  {networkName.charAt(0).toUpperCase() + networkName.slice(1)}
+                </option>
+              ))}
             </select>
           </div>
 
           <div className="mb-8">
-            <label htmlFor="currency" className="block text-lg font-semibold text-gray-300 mb-3">
+            <label htmlFor="currency" className="block text-md font-semibold text-gray-300 mb-3">
               Select Currency:
             </label>
             <select
@@ -53,9 +57,12 @@ const Settings = ({currency, setCurrency}) => {
           </div>
 
           <button
-            onClick={() => alert('Settings saved!')}
-            className="w-full  bg-[#8ecae6] text-black font-bold  hover:bg-[#219ebc]
-  py-4 rounded-lg  focus:outline-none focus:ring focus:ring-[#8ecae6] transition duration-300"
+            onClick={() => {
+              localStorage.setItem('selectedCurrency', currency);
+              localStorage.setItem('selectedNetwork', network);
+              alert('Settings saved!');
+            }}
+            className="w-full bg-[#8ecae6] text-black font-bold hover:bg-[#219ebc] py-4 rounded-lg focus:outline-none focus:ring focus:ring-[#8ecae6] transition duration-300"
           >
             Save Settings
           </button>
@@ -66,8 +73,10 @@ const Settings = ({currency, setCurrency}) => {
 };
 
 Settings.propTypes = {
-  currency: PropTypes.object,
-  setCurrency: PropTypes.func
+  currency: PropTypes.string,
+  setCurrency: PropTypes.func,
+  network: PropTypes.string,
+  setNetwork: PropTypes.func,
 };
 
 export default Settings;

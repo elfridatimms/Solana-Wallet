@@ -78,7 +78,7 @@ const RecoverWallet = () => {
     const [fileSuccess, setFileSuccess] = useState('');
     const [publicKeyDisplay, setPublicKeyDisplay] = useState('');
     const navigate = useNavigate();
-    const connection = new Connection('https://api.devnet.solana.com'); // Use devnet for testing
+    //const connection = new Connection('https://api.devnet.solana.com'); // Use devnet for testing
     const fileInputRef = React.createRef();
 
     // Handle updating the input fields

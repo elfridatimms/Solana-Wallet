@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Keypair, Connection } from '@solana/web3.js';
+import { useConnection } from '@solana/wallet-adapter-react';
+
 
 const VerifyExistingWallet = () => {
     const location = useLocation();
@@ -8,11 +10,13 @@ const VerifyExistingWallet = () => {
     const [publicKey, setPublicKey] = useState(null);
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { connection } = useConnection();
+
 
     useEffect(() => {
         const verifyWallet = async () => {
             try {
-                const connection = new Connection('https://api.devnet.solana.com');
+                //const connection = new Connection('https://api.devnet.solana.com');
                 const seed = await bip39.mnemonicToSeed(seedPhrase);
                 const keypair = Keypair.fromSeed(seed.slice(0, 32));
 

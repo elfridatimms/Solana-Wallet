@@ -5,6 +5,8 @@ import { derivePath } from 'ed25519-hd-key'; // Import to derive the correct Sol
 import { useNavigate } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider';
 import { FaTimes, FaCopy, FaDownload } from 'react-icons/fa'; // Icons for Copy, Download, and X button
+import { useConnection } from '@solana/wallet-adapter-react';
+
 
 const CreateWallet = () => {
     const [seedPhrase, setSeedPhrase] = useSeed();
@@ -14,7 +16,7 @@ const CreateWallet = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+    const { connection } = useConnection();
 
     // Generate the seed phrase and derive wallet when the component mounts
     useEffect(() => {

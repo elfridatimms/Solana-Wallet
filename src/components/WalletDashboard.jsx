@@ -19,6 +19,7 @@ import { FaHeadset, FaFileAlt, FaCopy } from 'react-icons/fa'; // Import icons
 import { useNavigate } from 'react-router-dom';
 import SendTransactionModal from './SendTransactionModal.jsx';
 import PropTypes from 'prop-types';
+import Aside from './Aside.jsx';
 
 
 
@@ -252,9 +253,10 @@ const handleCopy = () => {
       
       <div className="flex flex-row space-x-6">
         {/* Aside Section */}
-        <aside className="w-1/4 bg-[#313133] p-6 rounded-lg shadow-lg text-left max-w-md">
-          <h3 className="text-xl font-semibold mb-4 text-white">Useful Links</h3>
-          <ul className="space-y-2">
+
+        <Aside>
+        <h3 className="text-xl font-semibold mb-4 text-white">Useful Links</h3>
+        <ul className="space-y-2">
             <li>
               <Link 
                 to="/support" 
@@ -274,7 +276,8 @@ const handleCopy = () => {
               </Link>
             </li>
           </ul>
-        </aside>
+        </Aside>
+        
   
         {/* Main Content */}
         <div className="flex-grow">
@@ -398,7 +401,7 @@ const handleCopy = () => {
   
 };
 
-SPLTokenList.propTypes = {
+WalletDashboard.propTypes = {
   currency: PropTypes.object, // Ensure userKeypair is an instance of Keypair
 };
 
