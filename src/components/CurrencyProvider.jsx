@@ -1,31 +1,21 @@
-import React, { createContext, useState, useEffect } from 'react';
+// CurrencyProvider.jsx
 
-// Create a context
-export const CurrencyContext = createContext();
+import React, { createContext, useState, useContext } from 'react';
 
-const CurrencyProvider = ({ children }) => {
-    const [currency, setCurrency] = useState('USD'); // Default currency
-    const [exchangeRates, setExchangeRates] = useState({});
+const CurrencyContext = createContext();
 
-    // Fetch exchange rates when the component mounts or the currency changes
-    useEffect(() => {
-        const fetchExchangeRates = async () => {
-            try {
-                const response = await fetch('https://api.coingecko.com/api/v3/exchange_rates');
-                const data = await response.json();
-                setExchangeRates(data.rates); // Set the rates for conversions
-            } catch (error) {
-                console.error('Error fetching exchange rates:', error);
-            }
-        };
-        fetchExchangeRates();
-    }, [currency]);
-
-    return (
-        <CurrencyContext.Provider value={{ currency, setCurrency, exchangeRates }}>
-            {children}
-        </CurrencyContext.Provider>
-    );
+export const useCurrency = () => {
+  return useContext(CurrencyContext);
 };
 
-export default CurrencyProvider;
+const CurrencyProvider = ({ children }) => {
+  const [currency, setCurrency] = useState('usd');
+
+  return (
+    <CurrencyContext.Provider value={{ currency, setCurrency }}>
+      {children}
+    </CurrencyContext.Provider>
+  );
+};
+
+export default CurrencyProvider; // Change this to export as default

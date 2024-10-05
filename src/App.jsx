@@ -21,14 +21,15 @@ import Terms from './components/Terms.jsx';
 import Settings from './components/Settings.jsx';
 
 import Home from './components/Home.jsx';
-import CurrencyProvider from './components/CurrencyProvider.jsx';
+import CurrencyProvider from './components/CurrencyProvider';
+
 //keke
 const App = () => {
   const savedNetwork = localStorage.getItem('selectedNetwork') || 'devnet';
-  const savedCurrency = localStorage.getItem('selectedCurrency') || 'USD';
+  //const savedCurrency = localStorage.getItem('selectedCurrency') || 'USD';
 
   const [network, setNetwork] = useState(savedNetwork); // Default network
-  const [currency, setCurrency] = useState(savedCurrency); // Default currency
+  //const [currency, setCurrency] = useState(savedCurrency); // Default currency
 
 
   const wallets = [new PhantomWalletAdapter(), new SolflareWalletAdapter()]; // Wallets
@@ -43,7 +44,7 @@ const App = () => {
               debug
             >
               <SeedContextProvider>
-                <CurrencyProvider>
+                <CurrencyProvider >
 
                   <Routes>
                     <Route path="/" element={<Home />} />
@@ -56,7 +57,8 @@ const App = () => {
                     <Route path="/faq" element={<Faq />} />
                     <Route path="/support" element={<Support />} />
                     <Route path="/terms" element={<Terms />} />
-                    <Route path="/settings" element={<Settings network={network} setNetwork={setNetwork} />} />
+                    <Route path="/settings" element={<Settings network={network} setNetwork={setNetwork} 
+                                                             /* currency={currency} setCurrency={setCurrency} *//>} />
 
 
                   </Routes>

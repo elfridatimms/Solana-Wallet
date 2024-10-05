@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from 'react';
 import Header from './Header.jsx';
 import PropTypes from 'prop-types';
-import { CurrencyContext } from './CurrencyProvider'; // Assuming you use the CurrencyContext to handle the global currency state
+import { useCurrency } from './CurrencyProvider'; // Assuming you use the CurrencyContext to handle the global currency state
 
 const Settings = ({ network, setNetwork }) => {
-  const { currency, setCurrency } = useContext(CurrencyContext); // Use context to access global currency state
+  const { currency, setCurrency } = useCurrency(); // Use context to access global currency state
   const networks = ['mainnet-beta', 'testnet', 'devnet'];
 
   const handleNetworkChange = (event) => {
@@ -15,11 +15,11 @@ const Settings = ({ network, setNetwork }) => {
     setCurrency(e.target.value); // Update the currency context
   };
 
-  // Save the settings to localStorage whenever they change
-  useEffect(() => {
+  const handleSaveSettings = () => {
     localStorage.setItem('selectedCurrency', currency);
     localStorage.setItem('selectedNetwork', network);
-  }, [currency, network]);
+    alert('Settings saved!');
+  };
 
   return (
     <>
@@ -53,20 +53,18 @@ const Settings = ({ network, setNetwork }) => {
             </label>
             <select
               id="currency"
-              value={currency}
+              value={currency.toLowerCase()}
               onChange={handleCurrencyChange}
               className="mt-1 block w-full p-4 border border-gray-600 bg-[#1e1e21] text-white rounded-lg focus:ring focus:ring-blue-500 focus:border-blue-500 transition duration-300"
             >
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="GBP">GBP</option>
+              <option value="usd">USD</option>
+              <option value="eur">EUR</option>
+              <option value="gbp">GBP</option>
             </select>
           </div>
 
           <button
-            onClick={() => {
-              alert('Settings saved!');
-            }}
+            onClick={handleSaveSettings}
             className="w-full bg-[#8ecae6] text-black font-bold hover:bg-[#219ebc] py-4 rounded-lg focus:outline-none focus:ring focus:ring-[#8ecae6] transition duration-300"
           >
             Save Settings

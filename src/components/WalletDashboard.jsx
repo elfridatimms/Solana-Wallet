@@ -20,7 +20,8 @@ import { useNavigate } from 'react-router-dom';
 import SendTransactionModal from './SendTransactionModal.jsx';
 import PropTypes from 'prop-types';
 import Aside from './Aside.jsx';
-import { CurrencyContext } from './CurrencyProvider'; // Assuming you have a CurrencyProvider for global currency context
+import { useCurrency } from './CurrencyProvider'; // Assuming you have a CurrencyProvider for global currency context
+import { usd } from '@metaplex-foundation/js';
 
 
 
@@ -36,8 +37,9 @@ const WalletDashboard = () => {
   const [visible, setVisible] = useState(false);
   const [myKeyPair, setMyKeypair] = useState('');
 
-  const { currency: selectedCurrency } = useContext(CurrencyContext); // Get selected currency from context
+  console.log("balance: "+balance);
 
+  const { currency } = useCurrency(); // Get the selected currency from the context
 
   const location = useLocation();
   const password = location.state?.password;
@@ -47,6 +49,8 @@ const WalletDashboard = () => {
 
 
   const { connection } = useConnection();
+
+
   useEffect(() => {
     const retrieveAndDecryptSeed = async () => {
       try {
@@ -154,30 +158,26 @@ const WalletDashboard = () => {
 
 
 
-
-  // Fetch SOL price in the selected currency
   useEffect(() => {
     const fetchSolPrice = async () => {
       try {
-        const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=${selectedCurrency.toLowerCase()}`);
-
-        if (response.data && response.data.solana && response.data.solana[selectedCurrency.toLowerCase()]) {
-          const priceInSelectedCurrency = response.data.solana[selectedCurrency.toLowerCase()];
-          setSolPrice(priceInSelectedCurrency);
-        } else {
-          throw new Error('Invalid response structure from the API.');
-        }
+        const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd,eur,gbp`);
+    console.log("currency: "+ currency)
+        
+        setSolPrice(response.data.solana[currency]);
+        console.log("usd...."+response.data.solana.usd)
       } catch (err) {
         console.error('Error fetching SOL price:', err);
       }
     };
 
-    fetchSolPrice();
-    const interval = setInterval(fetchSolPrice, 60000); // Refresh price every minute
+    if (currency) {
+      fetchSolPrice();
+      const interval = setInterval(fetchSolPrice, 60000); // Refresh price every minute
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [selectedCurrency]);
-
+      return () => clearInterval(interval);
+    }
+  }, [currency]);
 
   const handleSendClick = () => {
     setModalType('send');
@@ -284,7 +284,7 @@ const WalletDashboard = () => {
                         <p className="mt-3 text-3xl font-medium text-white">
                           {balance !== null ? (
                             <span>
-                              {solPrice ? solPrice.toFixed(2) : 'Fetching price...'} {selectedCurrency}
+                             {solPrice !== null ? `${(balance * solPrice).toFixed(2)} ${currency.toUpperCase()}` : 'Fetching price...'}
                             </span>
                           ) : (
                             'Fetching balance...'

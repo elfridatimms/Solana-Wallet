@@ -7,7 +7,7 @@ import axios from 'axios';
 import CreateTokenModal from './CreateTokenModal'; // Import the modal
 import solLogo from '../assets/sol_logo.png';
 import SendTransactionModal from './SendTransactionModal';
-import { CurrencyContext } from './CurrencyProvider';
+import { useCurrency } from './CurrencyProvider';
 
 
 const SPLTokenList = ({ keypair }) => {
@@ -18,7 +18,8 @@ const SPLTokenList = ({ keypair }) => {
   const [isCreateTokenModalOpen, setIsCreateTokenModalOpen] = useState(false); // Manage create token modal visibility
   const [selectedToken, setSelectedToken] = useState(null); // Track selected token for sending
   const { connection } = useConnection();
-  const { currency: selectedCurrency } = useContext(CurrencyContext); // Get the selected currency
+  const { currency } = useCurrency(); // Get the selected currency from the context
+
 
 
   const publicKey = keypair.publicKey.toString();
@@ -44,28 +45,29 @@ const SPLTokenList = ({ keypair }) => {
     }
   }, [keypair, connection]);
 
-  // Fetch SOL price in the selected currency
   useEffect(() => {
     const fetchSolPrice = async () => {
       try {
-        const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=${selectedCurrency.toLowerCase()}`);
-
-        if (response.data && response.data.solana && response.data.solana[selectedCurrency.toLowerCase()]) {
-          const priceInSelectedCurrency = response.data.solana[selectedCurrency.toLowerCase()];
-          setSolPrice(priceInSelectedCurrency);
-        } else {
-          throw new Error('Invalid response structure from the API.');
-        }
+        const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd,eur,gbp`);
+    console.log("currency: "+ currency)
+        
+        setSolPrice(response.data.solana[currency]);
+        console.log("usd...."+response.data.solana.usd)
       } catch (err) {
         console.error('Error fetching SOL price:', err);
       }
     };
 
-    fetchSolPrice();
-    const interval = setInterval(fetchSolPrice, 60000); // Refresh price every minute
+    if (currency) {
+      fetchSolPrice();
+      const interval = setInterval(fetchSolPrice, 60000); // Refresh price every minute
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, [selectedCurrency]);
+      return () => clearInterval(interval);
+    }
+  }, [currency]);
+
+
+ 
 
   const handleAddAssetClick = () => {
     setIsCreateTokenModalOpen(true); // Open the create token modal
@@ -100,7 +102,7 @@ const SPLTokenList = ({ keypair }) => {
               </div>
             </div>
             <div className="text-gray-400 mx-auto">
-              Value:  {solPrice ? solPrice.toFixed(2) : 'Fetching price...'} {selectedCurrency}
+              Value:  {solPrice !== null ? `${(solBalance * solPrice).toFixed(2)} ${currency.toUpperCase()}` : 'Fetching price...'}
             </div>
             <button
               className="hidden group-hover:block bg-[#8ecae6] text-black font-bold py-1 px-3 rounded-md hover:bg-[#219ebc] transition duration-200"
@@ -111,7 +113,7 @@ const SPLTokenList = ({ keypair }) => {
           </li>
         )}
 
-        {tokens.length > 0 ? (
+{tokens.length > 0 ? (
           tokens.map((token, index) => (
             <li key={index} className="bg-[#3d3d3f] p-4 rounded-lg flex items-center justify-between relative group transition duration-200 hover:bg-[#4b4c4f]">
               <div className="flex items-center">
@@ -126,11 +128,11 @@ const SPLTokenList = ({ keypair }) => {
                 </div>
               </div>
               <div className="text-gray-400 mx-auto">
-                Value:  {solPrice ? solPrice.toFixed(2) : 'Fetching price...'} {selectedCurrency}
-              </div>
+              Value:  {solPrice !== null ? `${(token.amount * solPrice).toFixed(2)} ${currency.toUpperCase()}` : 'Fetching price...'}
+               </div>
               <button
                 className="hidden group-hover:block bg-[#8ecae6] text-black font-bold py-1 px-3 rounded-md hover:bg-[#219ebc] transition duration-200"
-                onClick={() => handleSendClick(token)} // Pass the token to the handleSendClick
+                onClick={() => handleSendClick(token)}
               >
                 Send
               </button>
