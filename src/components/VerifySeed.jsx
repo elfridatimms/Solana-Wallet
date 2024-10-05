@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as bip39 from 'bip39';
 import { Keypair, Connection } from '@solana/web3.js';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { encryptSeed } from '../utils/cryptoUtils';
 import { FaTimes, FaUpload, FaPaste } from 'react-icons/fa'; // Import X, Upload, and Paste icons
+import Tooltip from './Tooltip';
 //bkabla
 const VerifySeed = () => {
     const [seedInput, setSeedInput] = useState(new Array(12).fill('')); // 12 input fields for recovery phrase
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    let seedFromLastStep = useLocation().state?.seed;
     //const connection = new Connection('https://api.devnet.solana.com'); // Use devnet for testing
 
     const handleInputChange = (index, value) => {
@@ -34,7 +36,18 @@ const VerifySeed = () => {
     };
 
     const handleVerify = async () => {
+        if (!Array.isArray(seedFromLastStep)) {
+            console.log("seed from last step: ", seedFromLastStep);
+
+            navigate("/");
+            return;
+        }
+        seedFromLastStep = seedFromLastStep.join(" ").trim();
         const mnemonic = seedInput.join(' ').trim();
+        if (mnemonic != seedFromLastStep) {
+            setError("Seed mismatch!")
+            return;
+        }
         try {
             if (!bip39.validateMnemonic(mnemonic)) {
                 setError('Invalid seed phrase');
@@ -42,21 +55,15 @@ const VerifySeed = () => {
             }
 
             const seed = await bip39.mnemonicToSeed(mnemonic);
-            const keypair = Keypair.fromSeed(seed.slice(0, 32));
 
-            const password = localStorage.getItem('walletPassword');
-            const { encryptedData, iv } = await encryptSeed(mnemonic, password);
+            // const { encryptedData, iv } = await encryptSeed(mnemonic, password);
 
-            localStorage.setItem('encryptedSeed', JSON.stringify(Array.from(new Uint8Array(encryptedData))));
-            localStorage.setItem('iv', JSON.stringify(Array.from(iv)));
-
-            navigate('/password-setup');
+            navigate('/password-setup', { state: { seed: seedInput } });
         } catch (err) {
             setError('Error verifying the seed phrase or creating wallet.');
         }
     };
 
-    // Handle file upload (user can upload a file with the seed phrase)
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
         const reader = new FileReader();
@@ -112,31 +119,36 @@ const VerifySeed = () => {
 
                 {/* Circular Buttons for Upload and Paste */}
                 <div className="flex space-x-4 justify-center mb-4">
-                    {/* Upload Button with icon */}
-                    <label
-                        className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d] cursor-pointer"
-                    >
-                        <FaUpload className="text-lg" />
-                        <input
-                            type="file"
-                            onChange={handleFileUpload}
-                            accept=".txt"
-                            className="hidden"
-                        />
-                    </label>
-
                     {/* Paste Button with icon */}
-                    <button
-                        className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d]"
-                        onClick={handlePasteSeedPhrase}
-                    >
-                        <FaPaste className="text-lg" />
-                    </button>
+                    <Tooltip text="Paste">
+
+                        <button
+                            className="bg-[#3e3f43] text-white font-bold p-4 rounded-md transition transform hover:scale-110 hover:bg-[#57595d]"
+                            onClick={handlePasteSeedPhrase}
+                        >
+                            <FaPaste className="text-lg" />
+                        </button>
+                    </Tooltip>
+
+                    {/* Upload Button with icon */}
+                    <Tooltip text="Upload">
+                        <label
+                            className="bg-[#3e3f43] block text-white font-bold p-4 rounded-md transition transform hover:scale-110 hover:bg-[#57595d] cursor-pointer"
+                        >
+                            <FaUpload className="text-lg" />
+                            <input
+                                type="file"
+                                onChange={handleFileUpload}
+                                accept=".txt"
+                                className="hidden"
+                            />
+                        </label>
+                    </Tooltip>
                 </div>
 
                 {/* Blue Verify Button */}
                 <button
-                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-full text-md transition w-full font-sans"
+                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
                     onClick={handleVerify}
                 >
                     VERIFY SEED PHRASE

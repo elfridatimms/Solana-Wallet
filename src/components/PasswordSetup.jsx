@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSeed } from './SeedContextProvider';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { encryptSeed } from './RecoverWallet';
 import { FaTimes } from 'react-icons/fa'; // Import the close (X) icon
 
@@ -9,8 +8,8 @@ const PasswordSetup = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-    const [seed] = useSeed();
     const navigate = useNavigate();
+    const mnemonicArray = useLocation().state?.seed;
 
     const handleSubmit = async () => {
         if (password !== confirmPassword) {
@@ -22,7 +21,8 @@ const PasswordSetup = () => {
             setError("Username is already taken");
             return;
         }
-        const { encryptedData, iv, salt } = await encryptSeed(seed, password);
+        const mnemonic = mnemonicArray.join(" ");
+        const { encryptedData, iv, salt } = await encryptSeed(mnemonic, password);
         const newUser = {
             iv: Array.from(iv),
             salt: Array.from(salt),
@@ -79,7 +79,7 @@ const PasswordSetup = () => {
 
                 {/* Submit Button */}
                 <button
-                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-full text-md transition w-full font-sans"
+                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
                     onClick={handleSubmit}
                 >
                     SET PASSWORD

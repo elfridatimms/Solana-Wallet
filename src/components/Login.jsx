@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { decryptData } from '../utils/cryptoUtils'; // Adjust the path based on your folder structure
 import { FaTimes } from 'react-icons/fa'; // Import the close (X) icon
@@ -10,7 +10,9 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
+        setError("");
         // Retrieve user data from localStorage
+        console.log("username: ", username);
         const user = localStorage.getItem(username);
         console.log("User from localStorage:", user); // Debugging
 
@@ -87,7 +89,7 @@ const Login = () => {
 
                 {/* Submit Button */}
                 <button
-                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-full text-md transition w-full font-sans"
+                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
                     onClick={handleSubmit}
                 >
                     LOGIN
@@ -96,7 +98,7 @@ const Login = () => {
                 <hr className="my-4" />
 
                 <button
-                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-full text-md transition w-full font-sans"
+                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
                     onClick={() => navigate('/recover-wallet')}
                 >
                     IMPORT WALLET

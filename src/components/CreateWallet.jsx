@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSeed } from './SeedContextProvider';
 import { FaTimes, FaCopy, FaDownload } from 'react-icons/fa'; // Icons for Copy, Download, and X button
 import { useConnection } from '@solana/wallet-adapter-react';
+import Tooltip from './Tooltip';
 
 
 const CreateWallet = () => {
@@ -17,40 +18,35 @@ const CreateWallet = () => {
     const navigate = useNavigate();
 
     const { connection } = useConnection();
+    const generateWallet = async () => {
+        try {
+            // Generate mnemonic (seed phrase)
+            const mnemonic = bip39.generateMnemonic();
+            setSeedPhrase(mnemonic.split(' '));
+
+            // Derive the wallet using BIP44 path for Solana
+            const seed = await bip39.mnemonicToSeed(mnemonic); // Converts mnemonic to seed buffer
+            const path = `m/44'/501'/0'/0'`; // Standard BIP44 derivation path for Solana
+            const derivedSeed = derivePath(path, seed).key;
+
+            // Create a Keypair from the derived seed
+            const derivedKeypair = Keypair.fromSeed(derivedSeed.slice(0, 32));
+
+            // Set public key to state for display
+            setPublicKey(derivedKeypair.publicKey.toString());
+
+            // Request an airdrop (only on devnet) to activate the account
+            const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 2 * 1e9); // Request 1 SOL
+            await connection.confirmTransaction(airdropSignature, 'confirmed');
+            setAccountCreated(true); // Account successfully created and funded
+        } catch (err) {
+            console.error("Error creating wallet:", err);
+            setError("Failed to create the wallet. Please try again.");
+        }
+    };
 
     // Generate the seed phrase and derive wallet when the component mounts
     useEffect(() => {
-        const generateWallet = async () => {
-            try {
-                // Generate mnemonic (seed phrase)
-                const mnemonic = bip39.generateMnemonic();
-                setSeedPhrase(mnemonic.split(' '));
-
-                // Derive the wallet using BIP44 path for Solana
-                const seed = await bip39.mnemonicToSeed(mnemonic); // Converts mnemonic to seed buffer
-                const path = `m/44'/501'/0'/0'`; // Standard BIP44 derivation path for Solana
-                const derivedSeed = derivePath(path, seed).key;
-
-                // Create a Keypair from the derived seed
-                const derivedKeypair = Keypair.fromSeed(derivedSeed.slice(0, 32));
-
-                // Store the seed phrase and public key in localStorage (never store on server)
-                localStorage.setItem('solanaSeedPhrase', mnemonic);
-                localStorage.setItem('solanaPublicKey', derivedKeypair.publicKey.toString());
-
-                // Set public key to state for display
-                setPublicKey(derivedKeypair.publicKey.toString());
-
-                // Request an airdrop (only on devnet) to activate the account
-                const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 2 * 1e9); // Request 1 SOL
-                await connection.confirmTransaction(airdropSignature, 'confirmed');
-                setAccountCreated(true); // Account successfully created and funded
-            } catch (err) {
-                console.error("Error creating wallet:", err);
-                setError("Failed to create the wallet. Please try again.");
-            }
-        };
-
         generateWallet();
     }, []);
 
@@ -140,35 +136,37 @@ const CreateWallet = () => {
 
                 {/* Circular Buttons for Copy and Download */}
                 <div className="flex space-x-4 justify-center mb-4">
-                    <button
-                        className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d]"
-                        onClick={copyToClipboard}
-                    >
-                        <FaCopy className="text-lg" />
-                    </button>
+                    <Tooltip text="Copy">
+                        <button
+                            className="bg-[#3e3f43] text-white font-bold p-4 rounded-md transition transform hover:scale-110 hover:bg-[#57595d]"
+                            onClick={copyToClipboard}
+                        >
+                            <FaCopy className="text-lg" />
+                        </button>
+                    </Tooltip>
 
-                    <button
-                        className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d]"
-                        onClick={downloadSeedPhrase}
-                    >
-                        <FaDownload className="text-lg" />
-                    </button>
+                    <Tooltip text="Download">
+                        <button
+                            className="bg-[#3e3f43] text-white font-bold p-4 rounded-md transition transform hover:scale-110 hover:bg-[#57595d]"
+                            onClick={downloadSeedPhrase}
+                        >
+                            <FaDownload className="text-lg" />
+                        </button>
+                    </Tooltip>
                 </div>
 
                 {/* Big Button for "I Saved My Recovery Phrase" */}
                 {/* Big Button for "I Saved My Recovery Phrase" */}
                 {/* Big Button for "I Saved My Recovery Phrase" */}
                 <button
-                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-full text-md transition w-full font-sans"
-                    onClick={() => navigate('/verify-seed')} >
-
+                    className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
+                    onClick={() => {
+                        navigate('/verify-seed', { state: { seed: seedPhrase } });
+                        setSeedPhrase("");
+                    }}
+                >
                     I SAVED MY RECOVERY PHRASE
                 </button>
-
-
-
-
-
             </div >
         </div >
     );

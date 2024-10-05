@@ -72,7 +72,7 @@ async function getKeyMaterial(password) {
 }
 
 const RecoverWallet = () => {
-    const [seedPhrase, setSeedPhrase] = useSeed(); // 12 fields for recovery phrase
+    const [seedPhrase, setSeedPhrase, clearSeed] = useSeed(); // 12 fields for recovery phrase
     const [error, setError] = useState('');
     const [pasteSuccess, setPasteSuccess] = useState('');
     const [fileSuccess, setFileSuccess] = useState('');
@@ -159,6 +159,10 @@ const RecoverWallet = () => {
         };
     }, [seedPhrase]);
 
+    useEffect(() => {
+        return () => clearSeed();
+    }, [])
+
     const handleRecover = async () => {
         const mnemonic = seedPhrase.join(' ').trim();
         try {
@@ -171,13 +175,13 @@ const RecoverWallet = () => {
             // Derive the keypair from the mnemonic using correct derivation path
             const keypair = await deriveKeypairFromSeed(mnemonic);
 
-
             // Display the public key for the recovered wallet
             setPublicKeyDisplay(keypair.publicKey.toString());
             console.log("Public Key Generated:", keypair.publicKey.toString());
 
             // Navigate to password setup after successful wallet recovery
-            navigate('/password-setup');
+            navigate('/password-setup', { state: { seed: seedPhrase } });
+            clearSeed();
         } catch (err) {
             console.error("Error recovering the wallet: ", err);
             setError('Error recovering the wallet');
@@ -196,7 +200,10 @@ const RecoverWallet = () => {
                 className="relative max-w-md w-full bg-[#2c2d30] rounded-lg shadow-lg p-6 flex flex-col justify-between"
                 style={{ height: containerHeight }} // Dynamically change height based on paste success
             >                {/* X button for closing */}
-                <button className="absolute top-2 left-2 text-white text-lg" onClick={() => navigate('/')}>
+                <button className="absolute top-2 left-2 text-white text-lg" onClick={() => {
+                    setSeedPhrase(new Array(12).fill('')); // Clear the seed phrase
+                    navigate('/'); // Navigate back to the previous page
+                }}>
                     <FaTimes />
                 </button>
 
@@ -221,7 +228,6 @@ const RecoverWallet = () => {
                     {error && <p className="text-red-500 mb-4">{error}</p>}
                     {pasteSuccess && <p className="text-green-500 mb-4">{pasteSuccess}</p>}
                     {fileSuccess && <p className="text-green-500 mb-4">{fileSuccess}</p>}
-                    {publicKeyDisplay && <p className="text-green-500 mb-4">Generated Public Key: {publicKeyDisplay}</p>}
                 </div>
                 {/* Hidden file input */}
                 <input
@@ -234,12 +240,12 @@ const RecoverWallet = () => {
                 {/* Icons */}
                 <div className="flex justify-center space-x-4 mb-4">
                     {/* Upload Seed Phrase */}
-                    <button className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d]" onClick={handleUploadClick}>
+                    <button className="bg-[#3e3f43] text-white font-bold p-4 rounded-md transition transform hover:scale-110 hover:bg-[#57595d]" onClick={handleUploadClick}>
                         <FaUpload className="text-lg" />
                     </button>
 
                     {/* Paste Seed Phrase */}
-                    <button className="bg-[#3e3f43] text-white font-bold p-4 rounded-full transition transform hover:scale-110 hover:bg-[#57595d]" onClick={handlePaste}>
+                    <button className="bg-[#3e3f43] text-white font-bold p-4 rounded-md transition transform hover:scale-110 hover:bg-[#57595d]" onClick={handlePaste}>
                         <FaPaste className="text-lg" />
                     </button>
                 </div>

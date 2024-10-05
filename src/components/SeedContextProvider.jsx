@@ -9,10 +9,11 @@ const initialState = {
 const SeedContext = React.createContext(initialState);
 
 export const useSeed = () => {
-    const [seed, setSeed] = useContext(SeedContext);
+    const [seed, setSeed, clearSeed] = useContext(SeedContext);
     return [
         seed,
-        setSeed
+        setSeed,
+        clearSeed
     ]
 };
 

@@ -12,7 +12,6 @@ import { derivePath } from 'ed25519-hd-key'; // Use for correct Solana key deriv
 import axios from 'axios';
 
 import { useLocation } from 'react-router-dom';
-import { useSeed } from './SeedContextProvider.jsx';
 import { Link } from 'react-router-dom';
 import Header from './Header.jsx';
 import { FaHeadset, FaFileAlt, FaCopy } from 'react-icons/fa'; // Import icons
@@ -38,7 +37,7 @@ const WalletDashboard = () => {
   const [visible, setVisible] = useState(false);
   const [myKeyPair, setMyKeypair] = useState('');
 
-  console.log("balance: "+balance);
+  console.log("balance: " + balance);
 
   const { currency } = useCurrency(); // Get the selected currency from the context
 
@@ -95,13 +94,13 @@ const WalletDashboard = () => {
           console.error("can't decrypt data:", error);
         }
 
-        if (!bip39.validateMnemonic(decryptedSeed.replaceAll(",", " "))) {
+        if (!bip39.validateMnemonic(decryptedSeed)) {
           console.error("Invalid mnemonic after decryption");
           throw new Error('Invalid mnemonic');
         }
 
         // Convert mnemonic to seed using BIP39
-        const seed = await bip39.mnemonicToSeed(decryptedSeed.replaceAll(",", " "));
+        const seed = await bip39.mnemonicToSeed(decryptedSeed);
         console.log('Full Seed:', seed); // Log full seed for debugging
 
         // Derive key using ed25519-hd-key with Solana BIP44 path
@@ -163,10 +162,10 @@ const WalletDashboard = () => {
     const fetchSolPrice = async () => {
       try {
         const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd,eur,gbp`);
-    console.log("currency: "+ currency)
-        
+        console.log("currency: " + currency)
+
         setSolPrice(response.data.solana[currency]);
-        console.log("usd...."+response.data.solana.usd)
+        console.log("usd...." + response.data.solana.usd)
       } catch (err) {
         console.error('Error fetching SOL price:', err);
       }
@@ -242,7 +241,7 @@ const WalletDashboard = () => {
               <li>
                 <Link
                   to="/support"
-                  className="flex items-center p-3 rounded-lg transition duration-200 hover:bg-[#4b4c4f]"
+                  className="flex items-center p-3 rounded-md transition duration-200 hover:bg-[#4b4c4f]"
                 >
                   <FaHeadset className="mr-2" /> {/* Icon */}
                   <span className="text-lg">Support</span> {/* Enhanced Font Size */}
@@ -251,7 +250,7 @@ const WalletDashboard = () => {
               <li>
                 <Link
                   to="/terms"
-                  className="flex items-center p-3 rounded-lg transition duration-200 hover:bg-[#4b4c4f]"
+                  className="flex items-center p-3 rounded-md transition duration-200 hover:bg-[#4b4c4f]"
                 >
                   <FaFileAlt className="mr-2" /> {/* Icon */}
                   <span className="text-lg">Terms</span> {/* Enhanced Font Size */}
@@ -285,7 +284,7 @@ const WalletDashboard = () => {
                         <p className="mt-3 text-3xl font-medium text-white">
                           {balance !== null ? (
                             <span>
-                             {solPrice !== null ? `${(balance * solPrice).toFixed(2)} ${currency.toUpperCase()}` : 'Fetching price...'}
+                              {solPrice !== null ? `${(balance * solPrice).toFixed(2)} ${currency.toUpperCase()}` : 'Fetching price...'}
                             </span>
                           ) : (
                             'Fetching balance...'
@@ -295,19 +294,19 @@ const WalletDashboard = () => {
                         {/* Action Buttons */}
                         <div className="flex space-x-4 mt-8">
                           <button
-                            className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                            className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
                             onClick={handleBuyCrypto}
                           >
                             Buy Crypto
                           </button>
                           <button
-                            className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                            className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
                             onClick={handleReceiveClick}
                           >
                             Receive
                           </button>
                           <button
-                            className="bg-[#f4f9f9] text-black hover:bg-[#c4e0e5] font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105"
+                            className="bg-[#8ecae6] hover:bg-[#219ebc] text-black font-bold py-2 px-4 rounded-md text-md transition w-full font-sans"
                             onClick={handleSendClick}
                           >
                             Send
@@ -352,7 +351,7 @@ const WalletDashboard = () => {
                         className="fixed inset-0 flex items-center justify-center p-4"
                         overlayClassName="fixed inset-0 bg-black bg-opacity-50"
                       >
-                        <div className="bg-white p-6 rounded-lg flex flex-col items-center relative shadow-lg">
+                        <div className="bg-white p-6 rounded-md flex flex-col items-center relative shadow-lg">
                           <button
                             className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl font-bold"
                             onClick={handleModalClose}

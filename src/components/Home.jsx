@@ -46,7 +46,7 @@ const Home = () => {
         <>
             <div className="min-h-screen bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white flex flex-col items-center justify-center p-6">
                 {/* Header */}
-                <div className="bg-gradient-to-b from-[#1a1b1d] to-[#3e3f43] text-white">
+                <div>
                     {/* Hero Section */}
                     <section className="min-h-screen flex flex-col items-center justify-center text-center">
                         <div className="flex flex-col items-center justify-center">
@@ -57,13 +57,13 @@ const Home = () => {
                             </p>
                             <div className="flex space-x-4">
                                 <button
-                                    className="bg-[#8ecae6] text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition"
+                                    className="bg-[#8ecae6] text-black font-bold py-4 px-8 rounded-md text-lg hover:scale-105 transition"
                                     onClick={() => navigate('/create-wallet')}
                                 >
                                     Create New Wallet
                                 </button>
                                 <button
-                                    className="bg-[#8ecae6] text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition"
+                                    className="bg-[#8ecae6] text-black font-bold py-4 px-8 rounded-md text-lg hover:scale-105 transition"
                                     onClick={() => navigate('/login')}
                                 >
                                     Access Your Wallet
@@ -98,7 +98,7 @@ const Home = () => {
                 {/* Toggle FAQ Button */}
                 <div className="text-center my-10">
                     <button
-                        className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-full text-lg hover:scale-105 transition mt-10 mb-1"
+                        className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-md text-lg hover:scale-105 transition mt-10 mb-1"
                         onClick={toggleFaq}
                     >
                         {showFaq ? 'Hide FAQ' : 'Need help?'}  {/* Toggle Button Text */}
@@ -111,7 +111,7 @@ const Home = () => {
                 {/* "Still have questions?" text and Get in touch button */}
                 <div className="text-center mt-6 mb-10">
                     <p className="text-gray-400 mb-4">Still have questions?</p>
-                    <button className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-full text-lg hover:scale-105 transition mb-7">
+                    <button className="bg-[#8ecae6] text-black font-bold py-2 px-6 rounded-md text-lg hover:scale-105 transition mb-7">
                         Get in touch
                     </button>
                 </div>
