@@ -8,6 +8,7 @@ import CreateTokenModal from './CreateTokenModal'; // Import the modal
 import solLogo from '../assets/sol_logo.png';
 import SendTransactionModal from './SendTransactionModal';
 import { useCurrency } from './CurrencyProvider';
+import { deleteTokenAccount } from '../utils/removeTokenFromAccount';
 
 
 const SPLTokenList = ({ keypair }) => {
@@ -87,6 +88,11 @@ const SPLTokenList = ({ keypair }) => {
     setIsSendModalOpen(true); // Open the send modal
   };
 
+  const handleDeleteToken = async (tokenAddress) => {
+    await deleteTokenAccount(connection, keypair, tokenAddress);
+  };
+  
+
   return (
     <div className="bg-[#313133] rounded-lg p-4">
       <h3 className="text-2xl font-bold text-white mb-4">SPL Tokens</h3>
@@ -110,6 +116,8 @@ const SPLTokenList = ({ keypair }) => {
             >
               Send
             </button>
+
+
           </li>
         )}
 
@@ -136,6 +144,14 @@ const SPLTokenList = ({ keypair }) => {
               >
                 Send
               </button>
+
+              <button
+                  className="hidden ml-2 group-hover:block bg-[#f18080] text-black font-bold py-1 px-3 rounded-md hover:bg-[#d16060] transition duration-200"
+                  onClick={() => handleDeleteToken(token.mint)}
+                >
+                  Delete
+                </button>
+
             </li>
           ))
         ) : (

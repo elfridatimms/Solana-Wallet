@@ -21,10 +21,11 @@ const CreateTokenModal = ({ isOpen, onClose, setAddedTokens, keypair, connection
     const amount = 0; // Set to zero as no transfer is occurring here, only token account creation
     try {
       // Create the token account for the user
+      console.log(mint)
       const tokenAccount = await createTokenAccount(mint, keypair, connection, amount);
 
       // If successful, update the added tokens list in the parent component
-      setAddedTokens(prevTokens => [...prevTokens, { name, logo, mint, address: tokenAccount }]);
+      //setAddedTokens(prevTokens => [...prevTokens, { name, logo, mint, address: tokenAccount }]);
     } catch (error) {
       console.error("Error adding token:", error);
     }
@@ -35,10 +36,13 @@ const CreateTokenModal = ({ isOpen, onClose, setAddedTokens, keypair, connection
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get(
-          'https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/src/tokens/solana.tokenlist.json'
-        );
-        setTokens(response.data.tokens || []); // Set tokens to the retrieved tokens or an empty array
+
+        const response = await fetch('https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json');
+        const tokenList = await response.json();
+        console.log(tokenList.tokens)
+        //setTokens(tokenList || []); // Set tokens to the retrieved tokens or an empty array
+
+        setTokens(tokenList.tokens || []); // Set tokens to the retrieved tokens or an empty array
       } catch (err) {
         console.error('Error fetching tokens:', err);
         setError('Error fetching tokens');
