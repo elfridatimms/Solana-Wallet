@@ -19,6 +19,7 @@ export const deleteTokenAccount = async (connection, keypair, tokenAddress) => {
 
     const signature = await sendAndConfirmTransaction(connection, transaction, [keypair]);
     console.log('Deleted token account successfully, transaction signature:', signature);
+    alert("Account closed successfully!")
   } catch (error) {
     console.error('Error deleting token account:', error);
   }

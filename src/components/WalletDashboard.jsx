@@ -22,6 +22,7 @@ import PropTypes from 'prop-types';
 import Aside from './Aside.jsx';
 import { useCurrency } from './CurrencyProvider'; // Assuming you have a CurrencyProvider for global currency context
 import { usd } from '@metaplex-foundation/js';
+import Footer from './Footer.jsx';
 
 
 
@@ -377,6 +378,7 @@ const WalletDashboard = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 
