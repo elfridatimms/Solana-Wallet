@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../assets/cropped.png';
+import logo from '../assets/cropped.webp';
 
 const Footer = () => {
     return (

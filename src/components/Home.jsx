@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header'; // Assuming you already have the Header component
-import logo from '../assets/cropped.png'; // Adjust the path based on where you saved the image
+import logo from '../assets/cropped.webp'; // Adjust the path based on where you saved the image
 import Faq from './Faq';
 import Footer from './Footer';
 
