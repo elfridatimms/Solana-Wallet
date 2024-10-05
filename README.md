@@ -4,11 +4,11 @@
 
 ### A GREAAAAAT Solana Wallet Application 💥
 
-[Solara](https://solarawallet.netlify.com)
+[Solara](https://solarawallet.netlify.app)
 
-https://solarawallet.netlify.com
+https://solarawallet.netlify.app
 
-https://solarawallet.netlify.com
+https://solarawallet.netlify.app
 
 Dev mode
 
