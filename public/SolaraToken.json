@@ -1,0 +1,16 @@
+{
+    "name": "Solara",
+    "symbol": "SLRA",
+    "description": "Our Solara Token",
+    "image": "https://solarawallet.netlify.app/assets/cropped-BP5R4gKw.webpg",
+    "decimals": 9,
+    "attributes": [],
+    "properties": {
+        "files": [
+            {
+                "uri": "https://solarawallet.netlify.app/assets/cropped-BP5R4gKw.webpg",
+                "type": "image/webpg"
+            }
+        ]
+    }
+}
