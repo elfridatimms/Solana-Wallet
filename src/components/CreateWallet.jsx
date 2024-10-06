@@ -39,10 +39,10 @@ const CreateWallet = () => {
                 // Request an airdrop (only on devnet) to activate the account
                 const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 2 * 1e9); // Request 1 SOL
                 await connection.confirmTransaction(airdropSignature, 'confirmed');
+                setAccountCreated(true); // Account successfully created and funded
             } catch (err) {
 
             }
-            setAccountCreated(true); // Account successfully created and funded
         } catch (err) {
             console.error("Error creating wallet:", err);
             setError("Failed to create the wallet. Please try again.");
@@ -118,18 +118,9 @@ const CreateWallet = () => {
                     )}
                 </div>
 
-
-                {/* Display public key if available */}
-                {publicKey && (
-                    <div className="text-center mb-4">
-                        <p className="text-gray-400">Your Public Key:</p>
-                        <p className="text-[#8ecae6] font-mono">{publicKey}</p>
-                    </div>
-                )}
-
                 {accountCreated && (
                     <p className="text-green-500 text-center mb-4">
-                        Account successfully created and 1 SOL has been airdropped to your wallet!
+                        2 SOL has been airdropped to your wallet!
                     </p>
                 )}
 
