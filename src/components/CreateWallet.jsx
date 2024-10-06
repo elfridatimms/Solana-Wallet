@@ -35,9 +35,13 @@ const CreateWallet = () => {
             // Set public key to state for display
             setPublicKey(derivedKeypair.publicKey.toString());
 
-            // Request an airdrop (only on devnet) to activate the account
-            const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 2 * 1e9); // Request 1 SOL
-            await connection.confirmTransaction(airdropSignature, 'confirmed');
+            try {
+                // Request an airdrop (only on devnet) to activate the account
+                const airdropSignature = await connection.requestAirdrop(derivedKeypair.publicKey, 2 * 1e9); // Request 1 SOL
+                await connection.confirmTransaction(airdropSignature, 'confirmed');
+            } catch (err) {
+
+            }
             setAccountCreated(true); // Account successfully created and funded
         } catch (err) {
             console.error("Error creating wallet:", err);

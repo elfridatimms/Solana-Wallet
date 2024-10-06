@@ -202,7 +202,7 @@ const WalletDashboard = () => {
   const handleCopy = () => {
     navigator.clipboard.writeText(publicKey)
       .then(() => {
-        alert('Public key copied to clipboard!'); // You can replace this with a toast notification
+        alert('Wallet address copied to clipboard!'); // You can replace this with a toast notification
       })
       .catch(err => {
         console.error('Failed to copy: ', err);
@@ -272,13 +272,13 @@ const WalletDashboard = () => {
                     <div className="flex flex-col items-center space-y-8">
                       {/* Wallet Info */}
                       <div className="bg-[#313133] p-6 rounded-lg shadow-lg text-left w-full max-w-3xl">
-                        <p className="text-xs font-medium mb-1 text-gray-400">Public Key:</p>
+                        <p className="text-xs font-medium mb-1 text-gray-400">Wallet Address:</p>
                         <p className="bg-[#494e51] text-black font-mono p-1 rounded break-words text-sm flex items-center justify-between">
                           <span>{publicKey}</span>
                           <FaCopy
                             onClick={handleCopy}
                             className="cursor-pointer text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                            title="Copy Public Key"
+                            title="Copy Wallet Address"
                           />
                         </p>
                         <p className="mt-3 text-3xl font-medium text-white">
